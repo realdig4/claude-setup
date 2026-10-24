@@ -26,6 +26,11 @@ export interface StepAccountProps {
   /** Editing a profile that already has a saved key. */
   hasStoredKey: boolean
   advanced: boolean
+  /** Every way to buy this service (the preset itself included); a choice is shown when there are several. */
+  variants?: ProviderPreset[]
+  onSwitchVariant?: (variant: ProviderPreset) => void
+  /** Why the wizard switched variants by itself (e.g. the pasted key belongs to the membership plan). */
+  switchNote?: string | null
 }
 
 function StepNumber({ n }: { n: number }) {
@@ -42,8 +47,12 @@ function StepNumber({ n }: { n: number }) {
   )
 }
 
-/** Step 1: get and paste the API key, pick a region, enter a server address or cloud account details. */
-export function StepAccount({ preset, draft, onChange, errors, hasStoredKey, advanced }: StepAccountProps) {
+/**
+ * Step 1: how the service is paid for (when it's sold several ways), get and paste the API key, pick a region, enter a
+ * server address or cloud account details.
+ */
+export function StepAccount(props: StepAccountProps) {
+  const { preset, draft, onChange, errors, hasStoredKey, advanced, variants = [], onSwitchVariant, switchNote } = props
   const vendor = preset.vendor && preset.vendor !== 'Custom' ? preset.vendor : preset.name
   const keyHost = hostOf(preset.keyUrl)
   const region = preset.regions.find((r) => r.id === draft.regionId) ?? preset.regions[0]
@@ -67,6 +76,23 @@ export function StepAccount({ preset, draft, onChange, errors, hasStoredKey, adv
 
   return (
     <div className="flex flex-col gap-6">
+      {preset.family && variants.length > 1 ? (
+        <div className="flex flex-col gap-2">
+          <span className="text-[13px] font-medium text-fg">How do you pay for {preset.family.name}?</span>
+          <OptionCardGroup label={`How you pay for ${preset.family.name}`} columns={2}>
+            {variants.map((variant) => (
+              <OptionCard
+                key={variant.id}
+                title={variant.family?.choice ?? variant.name}
+                description={variant.family?.choiceHint}
+                checked={variant.id === preset.id}
+                onCheckedChange={() => onSwitchVariant?.(variant)}
+              />
+            ))}
+          </OptionCardGroup>
+        </div>
+      ) : null}
+
       {preset.requiresKey && preset.keyUrl && !hasStoredKey ? (
         <ol className="flex flex-col gap-3" aria-label="How to get a key">
           <li className="flex items-center gap-3">
@@ -206,6 +232,12 @@ export function StepAccount({ preset, draft, onChange, errors, hasStoredKey, adv
             placeholder={hasStoredKey ? '••••••••  (saved)' : (preset.keyPlaceholder ?? 'Paste your key')}
           />
         </Field>
+      ) : null}
+
+      {switchNote ? (
+        <Callout tone="success" role="status">
+          {switchNote}
+        </Callout>
       ) : null}
 
       {advanced && !userDefined && preset.kind !== 'cloud' ? (

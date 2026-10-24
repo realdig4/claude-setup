@@ -1,6 +1,6 @@
 import { RefreshCw, TriangleAlert } from 'lucide-react'
 import type { ModelPreset, ModelSlot, ProviderPreset } from '@shared/types'
-import { Badge, Button, Chip, Disclosure, Field, Input, Separator, Switch } from '@renderer/components/ui'
+import { Badge, Button, Callout, Chip, Disclosure, Field, Input, Separator, Switch } from '@renderer/components/ui'
 import { cn } from '@renderer/lib/cn'
 import { formatNumber, formatTokens } from '@renderer/lib/format'
 import { KeyValueEditor } from '../KeyValueEditor'
@@ -21,6 +21,8 @@ export interface StepModelsProps {
   /** A key exists (typed or saved) — required for the key-helper option. */
   hasKey: boolean
   advanced: boolean
+  /** What the wizard picked from the account's plan (e.g. the 1M-context variant). */
+  planNote?: string | null
 }
 
 const CONTEXT_CHOICES = [131_072, 200_000, 262_144, 1_000_000]
@@ -53,7 +55,7 @@ function ModelInfo({ model }: { model: ModelPreset | undefined }) {
 
 /** Step 2: pick the main and fast models (Advanced: every slot, context window, compatibility, extra env, key helper). */
 export function StepModels(props: StepModelsProps) {
-  const { preset, draft, onChange, onMainChange, models, loadingModels, onLoadModels, errors, hasKey, advanced } = props
+  const { preset, draft, onChange, onMainChange, models, loadingModels, onLoadModels, errors, hasKey, advanced, planNote } = props
   const userDefined = isUserDefined(preset)
   const mainModel = findModel(models, draft.main)
   const fastModel = findModel(models, draft.fast)
@@ -72,6 +74,11 @@ export function StepModels(props: StepModelsProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {planNote ? (
+        <Callout tone="accent" role="status">
+          {planNote}
+        </Callout>
+      ) : null}
       <div className="flex flex-col gap-2.5">
         <Field label="Main model" hint="Used for your conversations." required error={errors.main}>
           <ModelPicker value={draft.main} onChange={onMainChange} options={models} size="lg" placeholder="model-name" />

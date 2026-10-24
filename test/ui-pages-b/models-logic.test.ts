@@ -11,6 +11,7 @@ import {
   defaultFastModel,
   effectiveSlots,
   envVarError,
+  familyVariants,
   featuredProviders,
   findModel,
   groupProviders,
@@ -18,6 +19,7 @@ import {
   isClaudeModel,
   isRetiring,
   isUserDefined,
+  keyPrefixOf,
   matchesProvider,
   mergeModels,
   modelFacts,
@@ -30,6 +32,7 @@ import {
   sortedTags,
   statusHeadline,
   suggestProfileName,
+  variantForKey,
   verdictInfo
 } from '../../src/renderer/src/pages/models/logic'
 
@@ -311,5 +314,46 @@ describe('pages-b/models: results', () => {
     })
     expect(statusHeadline({ ...base, mode: 'custom', baseUrl: 'https://gw.example.com/x' }, undefined, undefined).title).toBe('gw.example.com')
     expect(statusHeadline({ ...base, mode: 'cloud', providerName: 'Amazon Bedrock' }, undefined, undefined).title).toBe('Claude via Amazon Bedrock')
+  })
+})
+
+describe('pages-b/models: provider families (one service sold several ways)', () => {
+  const fam = (choice: string) => ({ id: 'kimi', name: 'Kimi', description: 'Kimi K3 with your membership or pay as you go.', choice, choiceHint: '' })
+  const plan = preset({ id: 'kimi-code', name: 'Kimi Code (membership plan)', family: fam('Membership plan'), keyPattern: '^sk-kimi-', tags: ['popular', 'coding-plan'] })
+  const payg = preset({ id: 'moonshot', name: 'Kimi API (pay as you go)', family: fam('Pay as you go'), tags: ['popular'] })
+  const ds = preset({ id: 'deepseek', tags: ['popular', 'cheap'] })
+  const list = [plan, payg, ds]
+
+  it('features a family once, as its first variant', () => {
+    expect(featuredProviders(list).map((p) => p.id)).toEqual(['kimi-code', 'deepseek'])
+  })
+
+  it('lists the variants of a family in order', () => {
+    expect(familyVariants(payg, list).map((p) => p.id)).toEqual(['kimi-code', 'moonshot'])
+    expect(familyVariants(ds, list).map((p) => p.id)).toEqual(['deepseek'])
+  })
+
+  it('spots a membership key pasted into pay as you go (and nothing else)', () => {
+    expect(variantForKey(payg, list, ' sk-kimi-abc ')?.id).toBe('kimi-code')
+    expect(variantForKey(plan, list, 'sk-kimi-abc')).toBeUndefined()
+    expect(variantForKey(payg, list, 'sk-abc')).toBeUndefined()
+    expect(variantForKey(ds, list, 'sk-kimi-abc')).toBeUndefined()
+    expect(keyPrefixOf(plan)).toBe('sk-kimi-')
+    expect(keyPrefixOf(preset({ id: 'x', keyPattern: '^(a|b)-' }))).toBeUndefined()
+  })
+
+  it('carries the window the live list reports onto curated models', () => {
+    const base = [{ id: 'k3.1-pro', label: 'K3.1 Pro (256K)', context: 262144 }]
+    const merged = mergeModels(base, [{ id: 'k3.1-pro', label: 'K3.1 Pro', context: 262144, liveContext: 1048576 }, { id: 'new', label: 'New' }])
+    expect(merged).toEqual([{ id: 'k3.1-pro', label: 'K3.1 Pro (256K)', context: 262144, liveContext: 1048576 }, { id: 'new', label: 'New' }])
+  })
+})
+
+describe('pages-b/models: compatibility default from the provider', () => {
+  it('follows a provider that documents a setup without the compatibility bundle', () => {
+    const kimiCode = preset({ id: 'kimi-code', compatDefault: false })
+    expect(defaultCompatMode(kimiCode, 'k3.1-pro')).toBe(false)
+    expect(defaultCompatMode(preset({ id: 'other' }), 'k3.1-pro')).toBe(true)
+    expect(defaultCompatMode(preset({ id: 'groq', kind: 'openai-proxy', compatDefault: false }), 'x')).toBe(true)
   })
 })

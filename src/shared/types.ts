@@ -336,6 +336,8 @@ export interface ModelPreset {
   notes?: string
   /** Which slots it is a good default for. */
   recommendedFor?: Array<'main' | 'fast'>
+  /** Context window the provider's live model list reports for this account (it can depend on the plan). */
+  liveContext?: number
 }
 
 export type ProviderKind =
@@ -359,12 +361,29 @@ export interface ProviderRegion {
   baseUrl: string
 }
 
+/** One service sold in different ways (e.g. Kimi membership plan vs pay as you go): one card, then a choice. */
+export interface ProviderFamily {
+  /** Shared by every variant, e.g. 'kimi'. */
+  id: string
+  /** The service on its single Simple-mode card, e.g. "Kimi". */
+  name: string
+  /** Description on that card. */
+  description: string
+  /** This variant in the wizard's "How do you pay?" choice, e.g. "Membership plan". */
+  choice: string
+  /** One line under the choice, e.g. "Plus, Pro, Max or higher · key from kimi.com/code". */
+  choiceHint: string
+}
+
 export interface ProviderPreset {
   id: string
   name: string
   vendor: string
   description: string
   kind: ProviderKind
+  family?: ProviderFamily
+  /** Keys issued for this provider match this pattern (RegExp source), e.g. '^sk-kimi-' — spots keys pasted into a sibling. */
+  keyPattern?: string
   /** Brand color (hex) + short monogram for the UI avatar. No logos are bundled. */
   color: string
   monogram: string
@@ -381,6 +400,11 @@ export interface ProviderPreset {
   keyPlaceholder?: string
   models: ModelPreset[]
   defaults: Partial<Record<ModelSlot, string>> & { main: string }
+  /**
+   * Default of the compatibility bundle (tool search off, experimental betas off, …), which is otherwise on for every
+   * non-Claude model. False when the vendor's documented Claude Code setup needs none of it (Kimi Code).
+   */
+  compatDefault?: boolean
   /** Extra env always written for this provider (strings only). */
   extraEnv?: Record<string, string>
   /** Extra top-level settings.json keys (e.g. skipWebFetchPreflight). */

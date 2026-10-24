@@ -2,7 +2,7 @@
 import type { ConnectionTestInput, ModelProfile, ProviderPreset, ProviderRegion } from '@shared/types'
 import type { CoreContext } from '../context'
 import { cleanApiKey, getProfile } from './profiles'
-import { findProvider, findRegion } from './providers'
+import { findProvider, findRegion, sameFamily } from './providers'
 import { stripTrailingV1, trimSlashes } from './urls'
 
 export interface ResolvedConnection {
@@ -24,6 +24,8 @@ export async function resolveConnection(ctx: CoreContext, input: ConnectionTestI
   if (!preset) return { error: input?.providerId ? `Unknown provider "${input.providerId}".` : 'Choose a provider first.' }
 
   const fromProfile = profile && profile.providerId === preset.id ? profile : undefined
+  // A profile being switched to a sibling (e.g. Kimi pay as you go → membership plan) keeps its saved key.
+  const keyProfile = fromProfile ?? (profile && sameFamily(findProvider(profile.providerId), preset) ? profile : undefined)
   const region = findRegion(preset, input.regionId ?? fromProfile?.regionId)
   const typedUrl = input.baseUrl?.trim()
   let baseUrl: string
@@ -38,9 +40,9 @@ export async function resolveConnection(ctx: CoreContext, input: ConnectionTestI
     } catch (err) {
       return { error: (err as Error).message }
     }
-  } else if (fromProfile?.keyRef) {
+  } else if (keyProfile?.keyRef) {
     try {
-      key = (await ctx.secrets.get(fromProfile.keyRef)) ?? undefined
+      key = (await ctx.secrets.get(keyProfile.keyRef)) ?? undefined
     } catch {
       key = undefined
     }

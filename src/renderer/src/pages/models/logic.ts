@@ -113,9 +113,19 @@ export function groupProviders(
     .filter((group) => group.providers.length > 0)
 }
 
-/** The friendly picks shown first in Simple mode: popular third-party providers, then free/local/cheap ones. */
+/**
+ * The friendly picks shown first in Simple mode: popular third-party providers, then free/local/cheap ones. A family
+ * (one service sold several ways, like Kimi) appears once, as its first variant — the wizard offers the others.
+ */
 export function featuredProviders(list: readonly ProviderPreset[], limit = 8): ProviderPreset[] {
-  const eligible = list.filter((p) => p.kind !== 'anthropic' && p.kind !== 'cloud' && !isUserDefined(p) && p.kind !== 'custom')
+  const seenFamilies = new Set<string>()
+  const eligible = list.filter((p) => {
+    if (p.kind === 'anthropic' || p.kind === 'cloud' || isUserDefined(p) || p.kind === 'custom') return false
+    if (!p.family) return true
+    if (seenFamilies.has(p.family.id)) return false
+    seenFamilies.add(p.family.id)
+    return true
+  })
   const popular = eligible.filter((p) => p.tags.includes('popular'))
   const score = (p: ProviderPreset): number =>
     (p.tags.includes('free') ? 4 : 0) +
@@ -124,6 +134,35 @@ export function featuredProviders(list: readonly ProviderPreset[], limit = 8): P
     (p.tags.includes('fast') ? 1 : 0)
   const rest = eligible.filter((p) => !p.tags.includes('popular')).sort((a, b) => score(b) - score(a))
   return [...popular, ...rest].slice(0, limit)
+}
+
+/** Every variant of a provider's family (just the provider itself when it has none), in list order. */
+export function familyVariants(preset: ProviderPreset, list: readonly ProviderPreset[]): ProviderPreset[] {
+  if (!preset.family) return [preset]
+  const variants = list.filter((p) => p.family?.id === preset.family?.id)
+  return variants.length ? variants : [preset]
+}
+
+/** The family variant a pasted key clearly belongs to, when it isn't a key for `preset` (mirrors the core's rule). */
+export function variantForKey(preset: ProviderPreset, list: readonly ProviderPreset[], key: string): ProviderPreset | undefined {
+  const value = key.trim()
+  if (!preset.family || !value || keyMatches(preset, value)) return undefined
+  return familyVariants(preset, list).find((p) => p.id !== preset.id && keyMatches(p, value))
+}
+
+/** The literal start of a provider's keys ("sk-kimi-"), when its key pattern is a plain prefix. */
+export function keyPrefixOf(preset: ProviderPreset): string | undefined {
+  const pattern = preset.keyPattern
+  return pattern && /^\^[A-Za-z0-9_-]+$/.test(pattern) ? pattern.slice(1) : undefined
+}
+
+function keyMatches(preset: ProviderPreset, key: string): boolean {
+  if (!preset.keyPattern) return false
+  try {
+    return new RegExp(preset.keyPattern).test(key)
+  } catch {
+    return false
+  }
 }
 
 /** Free-text search over name, vendor, description, models and tag labels. */
@@ -200,9 +239,16 @@ export function modelLabel(models: readonly ModelPreset[] | undefined, id: strin
   return findModel(models ?? [], id)?.label ?? stripContextSuffix(id)
 }
 
-/** Preset models first (they carry curated labels and notes), then extra ones not already listed. */
+/**
+ * Preset models first (they carry curated labels and notes, plus the window the live list reports for the account),
+ * then extra ones not already listed.
+ */
 export function mergeModels(base: readonly ModelPreset[], extra: readonly ModelPreset[]): ModelPreset[] {
-  const out = [...base]
+  const live = new Map(extra.map((m) => [m.id, m.liveContext]))
+  const out = base.map((m) => {
+    const liveContext = live.get(m.id)
+    return liveContext && liveContext !== m.liveContext ? { ...m, liveContext } : m
+  })
   const ids = new Set(base.map((m) => m.id))
   for (const model of extra) {
     if (!ids.has(model.id)) {
@@ -283,10 +329,14 @@ export function modelIdError(id: string): string | undefined {
 // Wizard fields
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Compatibility mode default: always on for proxy providers, off for Claude itself and the clouds, else on for non-Claude models. */
+/**
+ * Compatibility mode default: always on for proxy providers, off for Claude itself and the clouds, the provider's own
+ * default when it has one, else on for non-Claude models. Mirrors the core's rule.
+ */
 export function defaultCompatMode(preset: ProviderPreset, main: string): boolean {
   if (preset.kind === 'anthropic' || preset.kind === 'cloud') return false
   if (preset.kind === 'openai-proxy') return true
+  if (preset.compatDefault !== undefined) return preset.compatDefault
   return !isClaudeModel(main)
 }
 

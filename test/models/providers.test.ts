@@ -5,11 +5,14 @@ import {
   ANTHROPIC_CAVEAT,
   findProvider,
   isUserDefinedEndpoint,
+  keyMatchesPreset,
   listProviders,
   modelLabel,
   modelNotices,
   providerForBaseUrl,
-  PROXY_HINTS
+  PROXY_HINTS,
+  sameFamily,
+  siblingForKey
 } from '@core/models/providers'
 import { hasContextSuffix } from '@core/models/urls'
 
@@ -142,6 +145,38 @@ describe('provider presets', () => {
     expect(kimi.regions.map((r) => r.baseUrl)).toEqual(['https://api.kimi.ai/coding/', 'https://api.kimi.com/coding/'])
     expect(kimi.contextWindow).toBe(262144)
     expect(hasContextSuffix(kimi.defaults.main)).toBe(false)
+    // Every 256K model the plans offer has its 1M variant for Pro and higher plans (the wizard switches to it).
+    for (const id of ['k3.1-pro', 'k3']) expect(kimi.models.map((m) => m.id)).toContain(`${id}[1m]`)
+  })
+
+  it('offers Kimi as one family: membership plan first, then pay as you go', () => {
+    const kimiFamily = providers.filter((p) => p.family?.id === 'kimi')
+    expect(kimiFamily.map((p) => p.id)).toEqual(['kimi-code', 'moonshot'])
+    expect(new Set(kimiFamily.map((p) => p.family?.name))).toEqual(new Set(['Kimi']))
+    expect(new Set(kimiFamily.map((p) => p.family?.choice)).size).toBe(2)
+  })
+
+  it('keeps every family consistent', () => {
+    const families = new Map<string, ProviderPreset[]>()
+    for (const p of providers) if (p.family) families.set(p.family.id, [...(families.get(p.family.id) ?? []), p])
+    for (const [, variants] of families) {
+      expect(variants.length).toBeGreaterThanOrEqual(2)
+      expect(new Set(variants.map((v) => `${v.family?.name}|${v.family?.description}`)).size).toBe(1)
+      expect(new Set(variants.map((v) => v.vendor)).size).toBe(1)
+      for (const v of variants) expect(v.family?.choiceHint.trim()).not.toBe('')
+    }
+  })
+
+  it('recognises Kimi membership keys pasted into pay as you go', () => {
+    const moonshot = findProvider('moonshot')!
+    const kimiCode = findProvider('kimi-code')!
+    expect(keyMatchesPreset(kimiCode, '  sk-kimi-abc123  ')).toBe(true)
+    expect(siblingForKey(moonshot, 'sk-kimi-abc123')?.id).toBe('kimi-code')
+    expect(siblingForKey(kimiCode, 'sk-kimi-abc123')).toBeUndefined()
+    expect(siblingForKey(moonshot, 'sk-abc123')).toBeUndefined()
+    expect(siblingForKey(findProvider('deepseek')!, 'sk-kimi-abc123')).toBeUndefined()
+    expect(sameFamily(moonshot, kimiCode)).toBe(true)
+    expect(sameFamily(moonshot, findProvider('deepseek'))).toBe(false)
   })
 
   it('blanks ANTHROPIC_API_KEY where providers require Bearer only', () => {

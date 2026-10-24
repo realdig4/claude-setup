@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { ModelProfile, ProviderPreset } from '@shared/types'
 import { newRow } from '../../src/renderer/src/pages/models/keyValueRows'
+import { effectiveSlots } from '../../src/renderer/src/pages/models/logic'
 import {
   accountErrors,
   accountStepLabel,
@@ -12,7 +13,9 @@ import {
   modelErrors,
   showsKeyField,
   supportsKeyHelper,
+  switchPreset,
   testSkipReason,
+  upgradeForPlan,
   withMainModel
 } from '../../src/renderer/src/pages/models/wizard/draft'
 
@@ -209,5 +212,69 @@ describe('pages-b/wizard: requests', () => {
     expect(testSkipReason(anthropic, initialDraft(anthropic, opts), false)).toMatch(/Claude account/)
     expect(testSkipReason(anthropic, { ...initialDraft(anthropic, opts), apiKey: 'sk-ant' }, false)).toBeNull()
     expect(testSkipReason(kimi, initialDraft(kimi, opts), false)).toBeNull()
+  })
+})
+
+describe('pages-b/wizard: one service sold two ways (Kimi)', () => {
+  const family = (choice: string) => ({ id: 'kimi', name: 'Kimi', description: 'Kimi K3', choice, choiceHint: '' })
+  const plan = preset({
+    id: 'kimi-code',
+    name: 'Kimi Code (membership plan)',
+    family: family('Membership plan'),
+    keyPattern: '^sk-kimi-',
+    regions: [
+      { id: 'global', label: 'International', baseUrl: 'https://api.kimi.ai/coding/' },
+      { id: 'china', label: 'China', baseUrl: 'https://api.kimi.com/coding/' }
+    ],
+    models: [
+      { id: 'k3.1-pro', label: 'K3.1 Pro (256K)', context: 262144, recommendedFor: ['main', 'fast'] },
+      { id: 'k3.1-pro[1m]', label: 'K3.1 Pro (1M)', context: 1048576 },
+      { id: 'k3-256k', label: 'K3 256K', context: 262144 }
+    ],
+    defaults: { main: 'k3.1-pro', opus: 'k3.1-pro', sonnet: 'k3.1-pro', haiku: 'k3.1-pro', fable: 'k3.1-pro', subagent: 'k3.1-pro' }
+  })
+  const payg = preset({
+    id: 'moonshot',
+    name: 'Kimi API (pay as you go)',
+    family: family('Pay as you go'),
+    regions: [
+      { id: 'global', label: 'International', baseUrl: 'https://api.moonshot.ai/anthropic' },
+      { id: 'china', label: 'China', baseUrl: 'https://api.moonshot.cn/anthropic' }
+    ],
+    models: [{ id: 'kimi-k3[1m]', label: 'Kimi K3' }],
+    defaults: { main: 'kimi-k3[1m]', opus: 'kimi-k3[1m]', sonnet: 'kimi-k3[1m]', haiku: 'kimi-k3[1m]', fable: 'kimi-k3[1m]', subagent: 'kimi-k3[1m]' }
+  })
+
+  it('switching plans keeps the typed key, region and a name the user chose, and resets the models', () => {
+    const draft = { ...initialDraft(payg, opts), apiKey: 'sk-kimi-abc', regionId: 'china', overrides: { opus: 'kimi-k3[1m]' } }
+    const moved = switchPreset(draft, plan, [])
+    expect(moved).toMatchObject({ apiKey: 'sk-kimi-abc', regionId: 'china', main: 'k3.1-pro', fast: 'k3.1-pro', overrides: {}, nameTouched: false })
+    expect(moved.name).toContain('K3.1 Pro (256K)')
+    const named = switchPreset({ ...draft, name: 'Work', nameTouched: true }, plan, [])
+    expect(named).toMatchObject({ name: 'Work', nameTouched: true })
+  })
+
+  it('moves untouched default models to the 1M variant when the live list says the plan has it', () => {
+    const draft = initialDraft(plan, opts)
+    const live = plan.models.map((m) => ({ ...m, liveContext: 1048576 }))
+    const next = upgradeForPlan(plan, live, draft, [])
+    expect(next).toMatchObject({ main: 'k3.1-pro[1m]', fast: 'k3.1-pro[1m]' })
+    expect(next?.name).toContain('K3.1 Pro (1M)')
+    expect(effectiveSlots(plan, next!.main, next!.fast, next!.overrides)).toEqual({
+      main: 'k3.1-pro[1m]',
+      opus: 'k3.1-pro[1m]',
+      sonnet: 'k3.1-pro[1m]',
+      haiku: 'k3.1-pro[1m]',
+      fable: 'k3.1-pro[1m]',
+      subagent: 'k3.1-pro[1m]'
+    })
+  })
+
+  it('leaves the models alone on smaller plans, without a live list, or after the user picked one', () => {
+    const draft = initialDraft(plan, opts)
+    expect(upgradeForPlan(plan, plan.models.map((m) => ({ ...m, liveContext: 262144 })), draft, [])).toBeNull()
+    expect(upgradeForPlan(plan, plan.models, draft, [])).toBeNull()
+    const live = plan.models.map((m) => ({ ...m, liveContext: 1048576 }))
+    expect(upgradeForPlan(plan, live, { ...draft, main: 'k3-256k', fast: 'k3-256k' }, [])).toBeNull()
   })
 })

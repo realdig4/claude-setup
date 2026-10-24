@@ -114,19 +114,70 @@ export async function writeClaudeSettings(file: SettingsFile, data: Record<strin
   await writeJsonAtomic(await physicalPath(file.path), data, { indent: file.indent, mode: 0o600 })
 }
 
-/**
- * Merge `"hasCompletedOnboarding": true` into ~/.claude.json, preserving everything else.
- * Many providers need it so Claude Code doesn't stop at the Anthropic sign-in screen.
- */
-export async function ensureOnboardingFlag(): Promise<{ changed: boolean; warning?: string }> {
+/** How Claude Code remembers a custom API key it asked about: the last 20 characters of the trimmed key. */
+export function apiKeyTag(key: string): string {
+  return key.trim().slice(-20)
+}
+
+export interface ClaudeJsonUpdate {
+  /** Merge `"hasCompletedOnboarding": true` — many providers need it so Claude Code skips the Anthropic sign-in screen. */
+  onboarding?: boolean
+  /**
+   * An ANTHROPIC_API_KEY the user chose in Claude Setup: mark it approved (and no longer rejected). Otherwise Claude
+   * Code stops at "Do you want to use this API key?", whose default answer is No, and VS Code keeps showing its login.
+   */
+  approveKey?: string
+}
+
+export interface ClaudeJsonPlan {
+  path: string
+  /** The changed file content, or null when nothing needs to change (or the file can't be used). */
+  data: Record<string, unknown> | null
+  indent: number
+  onboardingSet: boolean
+  /** The key is approved once `data` is written (or already was). */
+  keyApproved: boolean
+  warning?: string
+}
+
+function stringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string') : []
+}
+
+/** Work out the ~/.claude.json change for `update` without writing anything (callers back up first). */
+export async function planClaudeJson(update: ClaudeJsonUpdate): Promise<ClaudeJsonPlan> {
   const path = claudeJsonPath()
   const r = await readJson<unknown>(path)
   if (r.exists && (r.error || !isPlainObject(r.data))) {
-    return { changed: false, warning: `${path} couldn't be read (${r.error ?? 'not a JSON object'}), so the first-run screen may still appear.` }
+    const warning = `${path} couldn't be read (${r.error ?? 'not a JSON object'}), so Claude Code may show its first-run screen or ask about the API key once.`
+    return { path, data: null, indent: 2, onboardingSet: false, keyApproved: false, warning }
   }
-  const data = (r.data as Record<string, unknown> | undefined) ?? {}
-  if (data.hasCompletedOnboarding === true) return { changed: false }
-  data.hasCompletedOnboarding = true
-  await writeJsonAtomic(await physicalPath(path), data, { indent: detectIndent(r.text), mode: 0o600 })
-  return { changed: true }
+  const data = { ...((r.data as Record<string, unknown> | undefined) ?? {}) }
+  let onboardingSet = false
+  if (update.onboarding && data.hasCompletedOnboarding !== true) {
+    data.hasCompletedOnboarding = true
+    onboardingSet = true
+  }
+  let approvalChanged = false
+  const tag = update.approveKey ? apiKeyTag(update.approveKey) : ''
+  if (tag) {
+    const responses = isPlainObject(data.customApiKeyResponses) ? data.customApiKeyResponses : {}
+    const approved = stringList(responses.approved)
+    const rejected = stringList(responses.rejected)
+    if (!approved.includes(tag) || rejected.includes(tag)) {
+      data.customApiKeyResponses = {
+        ...responses,
+        approved: approved.includes(tag) ? approved : [...approved, tag],
+        rejected: rejected.filter((t) => t !== tag)
+      }
+      approvalChanged = true
+    }
+  }
+  const changed = onboardingSet || approvalChanged
+  return { path, data: changed ? data : null, indent: detectIndent(r.text), onboardingSet, keyApproved: !!tag }
+}
+
+/** Write a planned ~/.claude.json change (keeps everything else in the file). */
+export async function writeClaudeJson(plan: ClaudeJsonPlan): Promise<void> {
+  if (plan.data) await writeJsonAtomic(await physicalPath(plan.path), plan.data, { indent: plan.indent, mode: 0o600 })
 }

@@ -50,6 +50,47 @@ describe('listModels', () => {
     })
   })
 
+  it("reports the account's window for each Kimi Code model (plans differ)", async () => {
+    await withSandbox(async (sb) => {
+      const { ctx } = await makeContext(sb)
+      // Shape of the real GET https://api.kimi.ai/coding/v1/models answer for a Max plan (October 2026).
+      const model = (id: string, display: string, context: number) => ({
+        id,
+        object: 'model',
+        type: 'model',
+        display_name: display,
+        context_length: context,
+        supports_reasoning: true,
+        supports_image_in: true,
+        supports_thinking_type: 'only'
+      })
+      const fetch = stubFetch(() =>
+        json({
+          data: [
+            model('kimi-for-coding', 'K2.8 Preview', 1048576),
+            model('kimi-for-coding-highspeed', 'K2.7 Code Highspeed', 262144),
+            model('k3', 'K3', 1048576),
+            model('k3-256k', 'K3-256k', 262144),
+            model('k3.1-pro', 'K3.1 Pro', 1048576),
+            model('k3.1-pro-highspeed', 'K3.1 Pro Highspeed', 1048576)
+          ],
+          object: 'list',
+          first_id: 'kimi-for-coding',
+          last_id: 'k3.1-pro-highspeed',
+          has_more: false
+        })
+      )
+      const models = await listModels(ctx, { providerId: 'kimi-code', apiKey: 'sk-kimi-test' })
+      const call = fetch.mock.calls[0] as FetchArgs
+      expect(call[0]).toBe('https://api.kimi.ai/coding/v1/models')
+      expect(headersOf(call).authorization).toBe('Bearer sk-kimi-test')
+      const pro = models.find((m) => m.id === 'k3.1-pro')
+      expect(pro).toMatchObject({ label: 'K3.1 Pro (256K)', context: 262144, liveContext: 1048576 })
+      expect(models.find((m) => m.id === 'k3-256k')?.liveContext).toBe(262144)
+      expect(models.map((m) => m.id)).toEqual(findProvider('kimi-code')!.models.map((m) => m.id))
+    })
+  })
+
   it('uses the region of the profile and its stored key', async () => {
     await withSandbox(async (sb) => {
       const { ctx } = await makeContext(sb)

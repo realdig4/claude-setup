@@ -57,18 +57,79 @@ const PRESET_DATA: ProviderPreset[] = [
     tags: ['popular'],
     notes: [
       'Uses your Claude subscription login. Optionally save an Anthropic API key (Claude Console) to pay per use ' +
-        'instead — Claude Code asks you to approve a new key once.',
+        'instead — Claude Setup approves it in Claude Code for you.',
       'Choosing this removes every third-party model setting from Claude Code; Claude Code then picks the best Claude model itself.'
     ]
   },
 
   // ───────────────────────────── Anthropic-compatible providers ─────────────────────────────
+  // Kimi is sold two ways with different keys and servers: the membership plan (Kimi Code) and pay as you go.
+  {
+    id: 'kimi-code',
+    name: 'Kimi Code (membership plan)',
+    vendor: 'Moonshot AI',
+    description: 'Use your Kimi membership (Plus, Pro, Max or higher) in Claude Code. No per-use billing.',
+    kind: 'anthropic-compatible',
+    family: {
+      id: 'kimi',
+      name: 'Kimi',
+      description: 'Kimi K3 models with up to 1M tokens of context, with your Kimi membership (Plus, Pro, Max…) or pay as you go.',
+      choice: 'Membership plan',
+      choiceHint: 'Plus, Pro, Max or higher · key from kimi.com/code'
+    },
+    keyPattern: '^sk-kimi-',
+    color: '#0F172A',
+    monogram: 'KC',
+    website: 'https://www.kimi.com/code',
+    keyUrl: 'https://www.kimi.com/code/console',
+    docsUrl: 'https://www.kimi.com/code/docs/en/third-party-tools/claude-code.html',
+    regions: [
+      { id: 'global', label: 'International (api.kimi.ai)', baseUrl: 'https://api.kimi.ai/coding/' },
+      { id: 'china', label: 'China (api.kimi.com)', baseUrl: 'https://api.kimi.com/coding/' }
+    ],
+    authEnv: 'ANTHROPIC_API_KEY',
+    requiresKey: true,
+    keyPlaceholder: 'sk-kimi-…',
+    // The live list (GET /coding/v1/models) reports each model's window for the account's plan, so the wizard can
+    // switch to the 1M variants on Pro and higher plans.
+    models: [
+      { id: 'k3.1-pro', label: 'K3.1 Pro (256K)', context: 262144, thinking: 'always', vision: true, recommendedFor: ['main', 'fast'], notes: 'Every plan with coding quota (Plus and higher).' },
+      { id: 'k3.1-pro[1m]', label: 'K3.1 Pro (1M)', context: M, thinking: 'always', vision: true, notes: 'Pro, Max and higher plans.' },
+      { id: 'k3.1-pro-highspeed[1m]', label: 'K3.1 Pro HighSpeed (1M)', context: M, thinking: 'always', vision: true, notes: 'Faster. Pro, Max and higher plans.' },
+      { id: 'k3', label: 'K3 (256K)', context: 262144, thinking: 'optional', vision: true },
+      { id: 'k3[1m]', label: 'K3 (1M)', context: M, thinking: 'optional', vision: true, notes: 'Pro, Max and higher plans.' },
+      { id: 'k3-256k', label: 'K3 256K', context: 262144, thinking: 'optional', vision: true },
+      { id: 'kimi-for-coding[1m]', label: 'Kimi for Coding (1M)', context: M, vision: true, notes: "Kimi's rolling coding model (K2.8 Preview in October 2026)." },
+      { id: 'kimi-for-coding-highspeed', label: 'Kimi for Coding HighSpeed (256K)', context: 262144, vision: true, notes: 'Pro, Max and higher plans.' }
+    ],
+    defaults: slots('k3.1-pro'),
+    // Kimi's documented setup uses none of the compatibility bundle, and its models support tool search
+    // ("supports_dynamic_tools" in the live list), which keeps MCP tool definitions out of the context.
+    compatDefault: false,
+    extraEnv: { CLAUDE_CODE_EFFORT_LEVEL: 'max' },
+    contextWindow: 262144,
+    listModels: { url: '/v1/models', auth: 'bearer', shape: 'openai' },
+    tags: ['popular', 'coding-plan', 'long-context', 'china'],
+    notes: [
+      'Needs a Plus plan or higher (Go plans have no coding quota). Pro, Max and higher plans also get the 1M-token ' +
+        'context and the HighSpeed models.',
+      'Kimi Code keys start with sk-kimi-. Keys from platform.kimi.ai are for “Pay as you go”.',
+      "Kimi's terms forbid changing the User-Agent, so this key is never sent through Claude Setup's translation proxy."
+    ]
+  },
   {
     id: 'moonshot',
-    name: 'Kimi (Moonshot API)',
+    name: 'Kimi API (pay as you go)',
     vendor: 'Moonshot AI',
-    description: 'Kimi K3 models with a 1M-token context, pay as you go.',
+    description: 'Kimi K3 models with a 1M-token context, billed per use with API credits from platform.kimi.ai.',
     kind: 'anthropic-compatible',
+    family: {
+      id: 'kimi',
+      name: 'Kimi',
+      description: 'Kimi K3 models with up to 1M tokens of context, with your Kimi membership (Plus, Pro, Max…) or pay as you go.',
+      choice: 'Pay as you go',
+      choiceHint: 'API credits · key from platform.kimi.ai'
+    },
     color: '#1783FF',
     monogram: 'K',
     website: 'https://platform.kimi.ai',
@@ -95,50 +156,12 @@ const PRESET_DATA: ProviderPreset[] = [
     listModels: { url: '{origin}/v1/models', auth: 'bearer', shape: 'openai' },
     tags: ['popular', 'long-context', 'china'],
     notes: [
+      'Have a Kimi membership (Plus, Pro, Max…)? Choose “Membership plan” instead: membership keys (sk-kimi-…) only work there.',
       'Keys from platform.kimi.ai (international) and platform.kimi.com (China) are not interchangeable — pick the matching region.',
       "Moonshot's guide maps the fast slot to kimi-k2.7-code, but the K2 series closes to new users on 31 Oct 2026 " +
         "and retires by the end of December 2026, so this preset uses Kimi K3 everywhere.",
       'K3.1 Pro and K2.7 Code are thinking-only: if you see "only type=enabled is allowed", switch thinking back on ' +
         '(Alt+T, or Option+T on a Mac).'
-    ]
-  },
-  {
-    id: 'kimi-code',
-    name: 'Kimi Code (membership)',
-    vendor: 'Moonshot AI',
-    description: 'Use your Kimi Code membership quota (Plus plan or higher) in Claude Code.',
-    kind: 'anthropic-compatible',
-    color: '#0F172A',
-    monogram: 'KC',
-    website: 'https://www.kimi.com/code',
-    keyUrl: 'https://www.kimi.com/code/console',
-    docsUrl: 'https://www.kimi.com/code/docs/en/third-party-tools/claude-code.html',
-    regions: [
-      { id: 'global', label: 'International (kimi.ai)', baseUrl: 'https://api.kimi.ai/coding/' },
-      { id: 'china', label: 'China (kimi.com)', baseUrl: 'https://api.kimi.com/coding/' }
-    ],
-    authEnv: 'ANTHROPIC_API_KEY',
-    requiresKey: true,
-    keyPlaceholder: 'Your Kimi Code API key',
-    models: [
-      { id: 'k3.1-pro', label: 'K3.1 Pro (256K)', context: 262144, thinking: 'always', recommendedFor: ['main', 'fast'] },
-      { id: 'k3.1-pro[1m]', label: 'K3.1 Pro (1M, Pro+ / Allegretto+ plans)', context: M, thinking: 'always' },
-      { id: 'k3.1-pro-highspeed[1m]', label: 'K3.1 Pro HighSpeed (Pro+ / Allegretto+ plans)', context: M, thinking: 'always' },
-      { id: 'k3', label: 'K3 (256K)', context: 262144, thinking: 'optional' },
-      { id: 'k3-256k', label: 'K3 256K', context: 262144, thinking: 'optional' },
-      { id: 'kimi-for-coding[1m]', label: 'Kimi for Coding (1M)', context: M },
-      { id: 'kimi-for-coding-highspeed', label: 'Kimi for Coding HighSpeed (Pro+ / Allegretto+ plans)', context: 262144 }
-    ],
-    defaults: slots('k3.1-pro'),
-    extraEnv: { CLAUDE_CODE_EFFORT_LEVEL: 'max' },
-    contextWindow: 262144,
-    listModels: { url: '/v1/models', auth: 'bearer', shape: 'openai' },
-    tags: ['coding-plan', 'long-context', 'china'],
-    notes: [
-      'Needs a Plus (Moderato) plan or higher — Go plans have no coding quota. Plus gives a 256K context; on Pro+ / ' +
-        'Allegretto+ pick a 1M model.',
-      "Kimi's terms forbid changing the User-Agent, so this key is never sent through Claude Setup's translation proxy.",
-      'Claude Code asks once to approve this API key: run claude in a terminal, choose Yes, and restart VS Code afterwards.'
     ]
   },
   {
@@ -1041,6 +1064,28 @@ export function listProviders(): ProviderPreset[] {
 /** Preset by id (shared object — do not mutate). */
 export function findProvider(id: string | undefined): ProviderPreset | undefined {
   return id ? PROVIDERS.find((p) => p.id === id) : undefined
+}
+
+/** Same provider, or two ways of buying the same service (e.g. Kimi membership plan and pay as you go). */
+export function sameFamily(a: ProviderPreset | undefined, b: ProviderPreset | undefined): boolean {
+  if (!a || !b) return false
+  return a.id === b.id || (!!a.family && a.family.id === b.family?.id)
+}
+
+/** True when the key has the shape this provider's keys have (false when the provider has no known shape). */
+export function keyMatchesPreset(preset: ProviderPreset, key: string): boolean {
+  if (!preset.keyPattern) return false
+  try {
+    return new RegExp(preset.keyPattern).test(key.trim())
+  } catch {
+    return false
+  }
+}
+
+/** The sibling (same family) a pasted key belongs to, when it clearly isn't a key for `preset` itself. */
+export function siblingForKey(preset: ProviderPreset, key: string): ProviderPreset | undefined {
+  if (!preset.family || !key.trim() || keyMatchesPreset(preset, key)) return undefined
+  return PROVIDERS.find((p) => p.id !== preset.id && sameFamily(p, preset) && keyMatchesPreset(p, key))
 }
 
 /** Region by id, else the provider's first region. */

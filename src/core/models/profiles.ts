@@ -3,7 +3,7 @@ import { randomBytes } from 'node:crypto'
 import type { ModelProfile, ModelProfileInput, ModelSlot, OpResult, ProviderPreset } from '@shared/types'
 import type { CoreContext } from '../context'
 import { PROTECTED_EXTRA_ENV } from './ownedKeys'
-import { findProvider, findRegion } from './providers'
+import { findProvider, findRegion, sameFamily } from './providers'
 import { isClaudeModel, isHttpUrl, stripTrailingV1, trimSlashes } from './urls'
 
 export const MODEL_SLOTS: readonly ModelSlot[] = ['main', 'opus', 'sonnet', 'haiku', 'fable', 'subagent']
@@ -123,6 +123,7 @@ function resolveContextWindow(value: number | undefined): number | undefined {
 export function defaultCompatMode(preset: ProviderPreset, mainModel: string): boolean {
   if (preset.kind === 'anthropic' || preset.kind === 'cloud') return false
   if (preset.kind === 'openai-proxy') return true
+  if (preset.compatDefault !== undefined) return preset.compatDefault
   return !isClaudeModel(mainModel)
 }
 
@@ -158,8 +159,8 @@ export async function saveProfile(ctx: CoreContext, input: ModelProfileInput): P
       fail(`Couldn't save the API key securely: ${(err as Error).message}`)
     }
     hasKey = true
-  } else if (existing && !prev && hasKey) {
-    // Never send one provider's key to another provider.
+  } else if (existing && !prev && hasKey && !sameFamily(findProvider(existing.providerId), preset)) {
+    // Never send one provider's key to another provider (siblings like the two Kimi plans share a vendor).
     await ctx.secrets.delete(existing.keyRef ?? ref).catch(() => {})
     hasKey = false
   }

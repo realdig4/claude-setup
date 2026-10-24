@@ -9,7 +9,7 @@ import { maskSecret, pluralize } from '@renderer/lib/format'
 import { EASE_OUT } from '@renderer/lib/motion'
 import { useIsAdvanced } from '@renderer/lib/store'
 import { ApplyResultView } from '../ApplyResultView'
-import { findModel, isThirdParty, mergeModels, usesProxy } from '../logic'
+import { familyVariants, findModel, isThirdParty, keyPrefixOf, mergeModels, usesProxy, variantForKey } from '../logic'
 import {
   STEP_ORDER,
   accountErrors,
@@ -20,7 +20,9 @@ import {
   initialDraft,
   isValid,
   modelErrors,
+  switchPreset,
   testSkipReason,
+  upgradeForPlan,
   withMainModel,
   type StepId,
   type WizardDraft
@@ -33,7 +35,10 @@ import { StepTest, type TestState } from './StepTest'
 export interface ProviderWizardProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** The provider to start with (the user can switch to a sibling of its family, e.g. another Kimi plan). */
   preset: ProviderPreset
+  /** Every provider preset (to offer the family's other variants). */
+  providers?: ProviderPreset[]
   /** Edit this profile instead of creating a new one. */
   profile?: ModelProfile
   /** Names of the other saved setups (to suggest a unique name). */
@@ -63,11 +68,18 @@ interface Outcome {
  * then saves the profile and applies it to Claude Code and/or VS Code.
  */
 export function ProviderWizard(props: ProviderWizardProps) {
-  const { open, onOpenChange, preset, profile, existingNames, defaultTargets, vscodeInstalled, active, onSaved } = props
+  const { open, onOpenChange, profile, existingNames, defaultTargets, vscodeInstalled, active, onSaved } = props
   const advanced = useIsAdvanced()
+  const [preset, setPreset] = useState<ProviderPreset>(props.preset)
+  const variants = useMemo(() => familyVariants(preset, props.providers ?? [preset]), [preset, props.providers])
   const [step, setStep] = useState<StepId>('account')
-  const [draft, setDraft] = useState<WizardDraft>(() => initialDraft(preset, { profile, existingNames, defaultTargets }))
-  const [models, setModels] = useState<ModelPreset[]>(preset.models)
+  const [draft, setDraft] = useState<WizardDraft>(() => initialDraft(props.preset, { profile, existingNames, defaultTargets }))
+  const draftRef = useLatest(draft)
+  const [switchNote, setSwitchNote] = useState<string | null>(null)
+  const [planNote, setPlanNote] = useState<string | null>(null)
+  /** The connection the live model list was last checked for (the plan check runs once per connection). */
+  const planChecked = useRef<string | null>(null)
+  const [models, setModels] = useState<ModelPreset[]>(props.preset.models)
   const [loadingModels, setLoadingModels] = useState(false)
   const [test, setTest] = useState<TestState>({ status: 'idle' })
   const [attempted, setAttempted] = useState<Partial<Record<StepId, boolean>>>({})
@@ -81,7 +93,34 @@ export function ProviderWizard(props: ProviderWizardProps) {
   const panelMounted = useRef(false)
 
   const stepIndex = STEP_ORDER.indexOf(step)
-  const patch = (changes: Partial<WizardDraft>): void => setDraft((d) => ({ ...d, ...changes }))
+
+  /** Switch to another way of buying the same service, keeping the key and other typed values. */
+  const switchVariant = (next: ProviderPreset, changes: Partial<WizardDraft> = {}, note: string | null = null): void => {
+    setSwitchNote(note)
+    if (next.id === preset.id) {
+      setDraft((d) => ({ ...d, ...changes }))
+      return
+    }
+    setPreset(next)
+    setDraft((d) => switchPreset({ ...d, ...changes }, next, existingNames))
+    setModels(next.models)
+    setTest({ status: 'idle' })
+    setPlanNote(null)
+    planChecked.current = null
+  }
+
+  const patch = (changes: Partial<WizardDraft>): void => {
+    // A pasted key that clearly belongs to a sibling (a Kimi membership key on "pay as you go") switches over.
+    const sibling = changes.apiKey !== undefined ? variantForKey(preset, variants, changes.apiKey) : undefined
+    if (sibling) {
+      const prefix = keyPrefixOf(sibling)
+      const choice = sibling.family?.choice ?? sibling.name
+      const why = prefix ? ` (it starts with ${prefix})` : ''
+      switchVariant(sibling, changes, `That’s a ${sibling.name} key${why}, so we switched to “${choice}”.`)
+      return
+    }
+    setDraft((d) => ({ ...d, ...changes }))
+  }
   const accErrors = useMemo(() => accountErrors(preset, draft, savedHasKey), [preset, draft, savedHasKey])
   const modErrors = useMemo(() => modelErrors(draft), [draft])
   const appErrors = useMemo(() => applyErrors(draft, true), [draft])
@@ -114,6 +153,35 @@ export function ProviderWizard(props: ProviderWizardProps) {
     // Only react to step changes; the inputs are read fresh inside.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
+
+  // Entering the models step fetches the provider's live list once per connection (quietly). Plans can differ in what
+  // they include (Kimi Code: 1M context on Pro and Max), so untouched default models follow what the account gets.
+  const listSignature = JSON.stringify({ ...testInput, model: undefined })
+  useEffect(() => {
+    if (step !== 'models' || outcome || !preset.listModels) return
+    if (preset.requiresKey && !hasKey) return
+    if (planChecked.current === listSignature) return
+    planChecked.current = listSignature
+    let cancelled = false
+    const forPreset = preset
+    core.models
+      .listModels(connectionInput(forPreset, draftRef.current, savedId))
+      .then((list) => {
+        if (cancelled || !list.length) return
+        setModels((current) => mergeModels(current, list))
+        const next = upgradeForPlan(forPreset, mergeModels(forPreset.models, list), draftRef.current, existingNames)
+        if (!next) return
+        setDraft(next)
+        const label = findModel(forPreset.models, next.main)?.label ?? next.main
+        setPlanNote(`Your ${forPreset.family?.name ?? forPreset.name} plan includes the 1M-token context, so we picked ${label}.`)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+    // Runs when the step or the connection changes; the draft is read fresh inside.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, listSignature, preset])
 
   // Move focus into each new step once it mounts (after the previous one animated out), for keyboard and
   // screen-reader users. The first panel is left to the dialog's own initial focus.
@@ -254,6 +322,9 @@ export function ProviderWizard(props: ProviderWizardProps) {
         errors={attempted.account ? accErrors : {}}
         hasStoredKey={savedHasKey}
         advanced={advanced}
+        variants={variants}
+        onSwitchVariant={(variant) => switchVariant(variant)}
+        switchNote={switchNote}
       />
     )
   } else if (step === 'models') {
@@ -262,13 +333,17 @@ export function ProviderWizard(props: ProviderWizardProps) {
         preset={preset}
         draft={draft}
         onChange={patch}
-        onMainChange={(main) => setDraft((d) => withMainModel(d, preset, main, existingNames))}
+        onMainChange={(main) => {
+          setPlanNote(null)
+          setDraft((d) => withMainModel(d, preset, main, existingNames))
+        }}
         models={models}
         loadingModels={loadingModels}
         onLoadModels={() => void loadModels()}
         errors={attempted.models ? modErrors : {}}
         hasKey={hasKey}
         advanced={advanced}
+        planNote={planNote}
       />
     )
   } else if (step === 'test') {

@@ -12,7 +12,7 @@ import { buildPlan, PlanError, type ApplyPlan, type Endpoint } from './plan'
 import { getProfile, MODEL_SLOTS } from './profiles'
 import { ANTHROPIC_CAVEAT, findProvider, modelLabel, modelNotices } from './providers'
 import { setupProxyForProfile } from './proxySetup'
-import { clearClaudeCode, errorText, mergeVsMarkers, writeClaudeCodePlan, writeVsCodeEnv, type TargetResult } from './writers'
+import { clearClaudeCode, errorText, mergeVsMarkers, updateClaudeJson, writeClaudeCodePlan, writeVsCodeEnv, type TargetResult } from './writers'
 
 export const RESTART_CLAUDE_CODE = 'Restart Claude Code (close it and run claude again) to use the new settings.'
 export const RELOAD_VSCODE = 'Reload VS Code (Command Palette → "Developer: Reload Window") so the Claude Code extension picks up the change.'
@@ -95,12 +95,23 @@ function successMessage(target: ModelTarget, profile: ModelProfile, preset: Prov
   return `${app} now uses ${model} from ${preset.name}${endpoint.viaProxy ? ' (through the local proxy)' : ''}.`
 }
 
+/** The ANTHROPIC_API_KEY Claude Code would ask about (keys from apiKeyHelper or ANTHROPIC_AUTH_TOKEN aren't asked about). */
+function keyToApprove(endpoint: Endpoint): string | undefined {
+  return endpoint.authVar === 'ANTHROPIC_API_KEY' && endpoint.credential && !endpoint.helper ? endpoint.credential : undefined
+}
+
 /** Warnings shown after a successful apply. */
-async function afterApplyWarnings(profile: ModelProfile, preset: ProviderPreset, endpoint: Endpoint, targets: ModelTarget[]): Promise<string[]> {
+async function afterApplyWarnings(
+  profile: ModelProfile,
+  preset: ProviderPreset,
+  endpoint: Endpoint,
+  targets: ModelTarget[],
+  keyApproved: boolean
+): Promise<string[]> {
   const out: string[] = []
   if (isThirdParty(preset)) out.push(ANTHROPIC_CAVEAT)
   out.push(...modelNotices(preset.id, MODEL_SLOTS.map((s) => profile.models[s])))
-  if (endpoint.authVar === 'ANTHROPIC_API_KEY' && endpoint.credential && !endpoint.helper) out.push(API_KEY_APPROVAL_NOTE)
+  if (keyToApprove(endpoint) && !keyApproved) out.push(API_KEY_APPROVAL_NOTE)
   if (endpoint.helper) {
     out.push(KEY_HELPER_NOTE)
     if (!(await pathExists(keyHelperShimPath()))) {
@@ -149,7 +160,6 @@ export async function applyProfile(ctx: CoreContext, proxy: ProxyApi, req: Apply
   if (targets.includes('claude-code')) {
     claude = await writeClaudeCodePlan(ctx, settingsFile, plan, marker, {
       reason: `Use "${profile.name}" in Claude Code`,
-      onboarding: preset.kind !== 'anthropic',
       okMessage: successMessage('claude-code', profile, preset, endpoint),
       unchangedMessage: preset.kind === 'anthropic' && !hasEnv ? 'Claude Code already uses your Claude account.' : 'Claude Code already uses these settings.'
     })
@@ -167,12 +177,20 @@ export async function applyProfile(ctx: CoreContext, proxy: ProxyApi, req: Apply
   }
 
   if (results.some((r) => r.ok)) {
+    // ~/.claude.json: skip the first-run screen, and approve the API key the user just chose (the VS Code extension
+    // reads the same file, so this matters for both targets).
+    const json = await updateClaudeJson(
+      ctx,
+      { onboarding: !!claude?.result.ok && preset.kind !== 'anthropic', approveKey: keyToApprove(endpoint) },
+      `Use "${profile.name}" (Claude Code first-run and API key settings)`
+    )
+    warnings.push(...json.warnings)
     await updateMarker(
       ctx,
       (m) => {
         m.profileId = profile.id
         if (claude?.result.ok && claude.changed) m.claudeCode = claude.marker
-        if (claude?.onboardingSet) m.onboardingSet = true
+        if (json.onboardingSet) m.onboardingSet = true
         if (vscode?.result.ok) m.vscode = mergeVsMarkers(m.vscode, vscode.files)
       },
       (draft) => {
@@ -180,7 +198,7 @@ export async function applyProfile(ctx: CoreContext, proxy: ProxyApi, req: Apply
       }
     )
     ctx.events.emitEvent('state', { key: 'models' })
-    warnings.push(...(await afterApplyWarnings(profile, preset, endpoint, targets)))
+    warnings.push(...(await afterApplyWarnings(profile, preset, endpoint, targets, json.keyApproved)))
     if (claude?.result.ok && claude.result.backupId) warnings.push(RESTART_CLAUDE_CODE)
     if (vscode?.result.ok && vscode.wrote) warnings.push(RELOAD_VSCODE)
   }

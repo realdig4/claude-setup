@@ -13,10 +13,12 @@ export interface ProviderGalleryProps {
   advanced: boolean
 }
 
-function Grid({ items, onSelect, activeProviderId, advanced, featured }: {
+function Grid({ items, onSelect, activeProviderId, activeFamilyId, advanced, featured }: {
   items: ProviderPreset[]
   onSelect: (preset: ProviderPreset) => void
   activeProviderId?: string
+  /** Family of the provider in use (featured cards stand for their whole family). */
+  activeFamilyId?: string
   advanced: boolean
   featured?: boolean
 }) {
@@ -28,9 +30,10 @@ function Grid({ items, onSelect, activeProviderId, advanced, featured }: {
             <ProviderCard
               preset={preset}
               onSelect={onSelect}
-              active={preset.id === activeProviderId}
+              active={preset.id === activeProviderId || (featured && !!activeFamilyId && preset.family?.id === activeFamilyId)}
               advanced={advanced}
               featured={featured}
+              asFamily={featured}
             />
           </StaggerItem>
         ))}
@@ -84,7 +87,14 @@ export function ProviderGallery({ providers, loading, onSelect, activeProviderId
   if (!advanced) {
     return (
       <div className="flex flex-col gap-6">
-        <Grid items={featured} onSelect={onSelect} activeProviderId={activeProviderId} advanced={false} featured />
+        <Grid
+          items={featured}
+          onSelect={onSelect}
+          activeProviderId={activeProviderId}
+          activeFamilyId={list.find((p) => p.id === activeProviderId)?.family?.id}
+          advanced={false}
+          featured
+        />
         {list.length > featured.length ? (
           <div className="flex justify-center">
             <Button

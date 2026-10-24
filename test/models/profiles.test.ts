@@ -125,6 +125,20 @@ describe('model profiles', () => {
     })
   })
 
+  it('keeps the saved key when a setup moves to a sibling plan, but never hands it to another vendor', async () => {
+    await withSandbox(async (sb) => {
+      const { ctx } = await makeContext(sb)
+      const p = await saveProfile(ctx, { name: 'Kimi', providerId: 'moonshot', apiKey: 'sk-kimi-plan-key', models: { main: 'kimi-k3[1m]' } })
+      const moved = await saveProfile(ctx, { id: p.id, name: 'Kimi', providerId: 'kimi-code', models: { main: 'k3.1-pro' } })
+      expect(moved.hasKey).toBe(true)
+      expect(moved.baseUrl).toBe('https://api.kimi.ai/coding/')
+      expect(await ctx.secrets.get(moved.keyRef!)).toBe('sk-kimi-plan-key')
+      const other = await saveProfile(ctx, { id: p.id, name: 'Kimi', providerId: 'deepseek', models: { main: 'deepseek-flash[1m]' } })
+      expect(other.hasKey).toBe(false)
+      expect(await ctx.secrets.has(`profile:${p.id}`)).toBe(false)
+    })
+  })
+
   it('refreshes hasKey from the secret store when listing', async () => {
     await withSandbox(async (sb) => {
       const { ctx } = await makeContext(sb)

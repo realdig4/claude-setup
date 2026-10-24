@@ -53,7 +53,7 @@ describe('status', () => {
       expect(st.mode).toBe('custom')
       expect(st.profileId).toBe(p.id)
       expect(st.providerId).toBe('moonshot')
-      expect(st.providerName).toBe('Kimi (Moonshot API)')
+      expect(st.providerName).toBe('Kimi API (pay as you go)')
       expect(st.model).toBe('kimi-k3[1m]')
       expect(st.baseUrl).toBe('https://api.moonshot.ai/anthropic')
       expect(st.authVar).toBe('ANTHROPIC_AUTH_TOKEN')

@@ -119,9 +119,11 @@ describe('apply / reset', () => {
       expect(vs.env.find((e) => e.name === 'ANTHROPIC_AUTH_TOKEN')?.value).toBe('sk-moon')
       expect(vs.env.find((e) => e.name === 'ANTHROPIC_MODEL')?.value).toBe('kimi-k3[1m]')
 
-      expect(backups.snapshots[0].paths).toEqual([claudeUserSettingsPath(), claudeJsonPath()])
+      expect(backups.snapshots[0].paths).toEqual([claudeUserSettingsPath()])
       expect(backups.snapshots[0].contents[claudeUserSettingsPath()]).toBe(before)
       expect(backups.snapshots[1].paths).toEqual([vsPath()])
+      // ~/.claude.json gets its own backup, only because it changed (the first-run flag).
+      expect(backups.snapshots[2].paths).toEqual([claudeJsonPath()])
       expect(ctx.state.get().activeProfileId).toBe(p.id)
       expect(readMarker(ctx).claudeCode?.settings.skipWebFetchPreflight).toBeTruthy()
       expect(await readFile(join(sb.dataDir, 'state.json'), 'utf8')).not.toContain('sk-moon')
@@ -249,16 +251,46 @@ describe('apply / reset', () => {
       expect(env.ANTHROPIC_API_KEY).toBe('')
       expect(env.CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY).toBe('1')
 
-      const kc = await saveProfile(ctx, { name: 'KC', providerId: 'kimi-code', apiKey: 'kc-key', models: { main: 'k3.1-pro' } })
+      const kcKey = 'sk-kimi-kc-key-0123456789-abcdefghijklmnop'
+      const kc = await saveProfile(ctx, { name: 'KC', providerId: 'kimi-code', apiKey: kcKey, models: { main: 'k3.1-pro' } })
       const res = await applyProfile(ctx, fakeProxy(), { profileId: kc.id, targets: ['claude-code'] })
       env = (await readJsonFile<Settings>(claudeUserSettingsPath())).env!
-      expect(env.ANTHROPIC_API_KEY).toBe('kc-key')
+      expect(env.ANTHROPIC_API_KEY).toBe(kcKey)
       expect('ANTHROPIC_AUTH_TOKEN' in env).toBe(false)
       expect('CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY' in env).toBe(false)
       expect(env.ANTHROPIC_BASE_URL).toBe('https://api.kimi.ai/coding/')
       expect(env.CLAUDE_CODE_MAX_CONTEXT_TOKENS).toBe('262144')
       expect(env.CLAUDE_CODE_AUTO_COMPACT_WINDOW).toBe('262144')
-      expect(res.warnings.some((w) => /approve|choose "Yes"/i.test(w))).toBe(true)
+      // Claude Code would stop at "Do you want to use this API key?" (default answer: No) — approved for the user.
+      const cj = await readJsonFile<{ customApiKeyResponses?: { approved: string[]; rejected: string[] } }>(claudeJsonPath())
+      expect(cj.customApiKeyResponses).toEqual({ approved: [kcKey.slice(-20)], rejected: [] })
+      expect(res.warnings.some((w) => /choose "Yes"/i.test(w))).toBe(false)
+    })
+  })
+
+  it('approves an API key Claude Code was told to reject, for VS Code too, and backs up ~/.claude.json only on change', async () => {
+    await withSandbox(async (sb) => {
+      const { ctx, backups } = await makeContext(sb)
+      const key = 'sk-kimi-REJECTEDBEFORE-0123456789abcdefghij'
+      const tag = key.slice(-20)
+      await writeText(vsPath(), '{}\n')
+      await writeText(
+        claudeJsonPath(),
+        JSON.stringify({ hasCompletedOnboarding: true, mcpServers: { fs: { type: 'stdio', command: 'npx' } }, customApiKeyResponses: { approved: ['someone-elses-key-01'], rejected: [tag] } })
+      )
+      const p = await saveProfile(ctx, { name: 'KC', providerId: 'kimi-code', apiKey: key, models: { main: 'k3.1-pro[1m]' } })
+      const res = await applyProfile(ctx, fakeProxy(), { profileId: p.id, targets: ['vscode'] })
+      expect(res.ok).toBe(true)
+      const cj = await readJsonFile(claudeJsonPath())
+      expect(cj.customApiKeyResponses).toEqual({ approved: ['someone-elses-key-01', tag], rejected: [] })
+      expect(cj.mcpServers).toEqual({ fs: { type: 'stdio', command: 'npx' } })
+      expect(res.warnings.some((w) => /choose "Yes"/i.test(w))).toBe(false)
+      const jsonBackups = () => backups.snapshots.filter((s) => s.paths.includes(claudeJsonPath())).length
+      expect(jsonBackups()).toBe(1)
+
+      await applyProfile(ctx, fakeProxy(), { profileId: p.id, targets: ['vscode'] })
+      expect(jsonBackups()).toBe(1)
+      expect(await readFile(join(sb.dataDir, 'state.json'), 'utf8')).not.toContain(tag)
     })
   })
 

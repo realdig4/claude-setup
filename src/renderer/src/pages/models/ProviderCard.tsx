@@ -14,11 +14,16 @@ export interface ProviderCardProps {
   advanced: boolean
   /** Bigger, friendlier card (Simple mode featured picks). */
   featured?: boolean
+  /** Stand for the whole family ("Kimi") rather than this one way of buying it. */
+  asFamily?: boolean
 }
 
 /** A provider in the gallery: brand monogram, name, vendor, tags and a short description. Click to set it up. */
-export function ProviderCard({ preset, onSelect, active, advanced, featured }: ProviderCardProps) {
+export function ProviderCard({ preset, onSelect, active, advanced, featured, asFamily }: ProviderCardProps) {
   const descriptionId = useId()
+  const family = asFamily ? preset.family : undefined
+  const name = family?.name ?? preset.name
+  const description = family?.description ?? preset.description
   const allTags = sortedTags(preset)
   const tags = allTags.slice(0, 3)
   const hidden = allTags.slice(3)
@@ -28,14 +33,14 @@ export function ProviderCard({ preset, onSelect, active, advanced, featured }: P
     <Card
       interactive
       onClick={() => onSelect(preset)}
-      aria-label={`Set up ${preset.name}`}
+      aria-label={`Set up ${name}`}
       aria-describedby={descriptionId}
       className={cn('group flex h-full flex-col', featured ? 'p-5' : 'p-4')}
     >
       <div className="flex items-start gap-3.5">
-        <Monogram text={preset.name} letters={preset.monogram} color={preset.color} size={featured ? 'lg' : 'md'} />
+        <Monogram text={name} letters={family ? name.slice(0, 1) : preset.monogram} color={preset.color} size={featured ? 'lg' : 'md'} />
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[15px] leading-6 font-semibold tracking-[-0.01em] text-fg">{preset.name}</div>
+          <div className="truncate text-[15px] leading-6 font-semibold tracking-[-0.01em] text-fg">{name}</div>
           <div className="truncate text-[13px] leading-5 text-fg-muted">{preset.vendor}</div>
         </div>
         {active ? (
@@ -53,7 +58,7 @@ export function ProviderCard({ preset, onSelect, active, advanced, featured }: P
         )}
       </div>
       <p id={descriptionId} className={cn('mt-3 text-[13px] leading-5 text-fg-muted', featured ? 'line-clamp-3' : 'line-clamp-2')}>
-        {preset.description}
+        {description}
       </p>
       <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4">
         {tags.map((tag) => (

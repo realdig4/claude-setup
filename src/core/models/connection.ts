@@ -7,7 +7,7 @@ import type { ConnectionTestInput, ConnectionTestResult, ProviderPreset } from '
 import type { CoreContext } from '../context'
 import { isPlainObject } from '../fs/json'
 import { fetchText, type HttpResult } from '../http'
-import { PROXY_HINTS } from './providers'
+import { PROXY_HINTS, siblingForKey } from './providers'
 import { resolveConnection } from './resolve'
 import { hostOf, isHttpUrl, joinUrl, stripContextSuffix } from './urls'
 
@@ -17,8 +17,10 @@ type Wire = 'anthropic' | 'openai'
 const TEST_TIMEOUT_MS = 30_000
 
 const KEY_HINTS: Record<string, string> = {
-  moonshot: 'Keys from platform.kimi.ai (international) and platform.kimi.com (China) only work with their own region.',
-  'kimi-code': 'Use the API key from your Kimi Code console (kimi.com/code), not a Moonshot platform key.',
+  moonshot:
+    'Keys from platform.kimi.ai (international) and platform.kimi.com (China) only work with their own region. ' +
+    'A Kimi membership key (sk-kimi-…) needs “Membership plan” instead.',
+  'kimi-code': 'Use an API key from your Kimi Code console (kimi.com/code/console); they start with sk-kimi-. Keys from platform.kimi.ai are for “Pay as you go”.',
   zai: 'Z.ai keys only work with their own site: z.ai keys for International, bigmodel.cn keys for China.',
   qwen: 'Alibaba keys only work in the region where they were created, and Coding Plan keys (sk-sp-…) need the Coding Plan provider.',
   'qwen-coding': 'The Coding Plan needs a Coding Plan key (sk-sp-…); pay-as-you-go keys are rejected here.',
@@ -120,6 +122,8 @@ interface InterpretContext {
   model: string
   baseUrl: string
   wire: Wire
+  /** The key belongs to a sibling provider (e.g. a Kimi membership key tested against pay as you go). */
+  sibling?: ProviderPreset
 }
 
 function networkVerdict(res: HttpResult<string>, { preset, baseUrl }: InterpretContext): Interpretation {
@@ -184,9 +188,13 @@ export function interpretResponse(res: HttpResult<string>, c: InterpretContext):
     return { verdict: 'bad-url', message: `${hostOf(c.baseUrl)} answered with a web page (HTTP ${res.status}) instead of the API. Check the address.` }
   }
   if (status === 401 || status === 403) {
+    if (c.sibling) {
+      const choice = c.sibling.family?.choice ?? c.sibling.name
+      return { verdict: 'bad-key', message: `The API key was rejected (HTTP ${status}). This key is for ${c.sibling.name}, not ${preset.name}: choose “${choice}” and test again.` }
+    }
     const hint = KEY_HINTS[preset.id] ? ` ${KEY_HINTS[preset.id]}` : ''
     const message =
-      `The API key was rejected (HTTP ${status}). ` +
+      `The API key was rejected (HTTP ${status}).${said} ` +
       `Check that you copied the whole key and that it belongs to this provider, region and plan.${hint}`
     return { verdict: 'bad-key', message }
   }
@@ -276,7 +284,8 @@ export async function testConnection(ctx: CoreContext, input: ConnectionTestInpu
     res = { ok: false, status: 0, error: (err as Error).message }
   }
   const ms = Date.now() - started
-  const result = interpretResponse(res, { preset, model, baseUrl, wire })
+  const sibling = key ? siblingForKey(preset, key) : undefined
+  const result = interpretResponse(res, { preset, model, baseUrl, wire, sibling })
   ctx.log.info('models', `Connection test ${preset.name} at ${hostOf(baseUrl)}: HTTP ${res.status || '-'} → ${result.verdict} (${ms} ms)`)
   return {
     ok: result.verdict === 'ok',

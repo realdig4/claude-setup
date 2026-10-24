@@ -75,6 +75,27 @@ describe('testConnection', () => {
     expect(headers(calls[0])['x-api-key']).toBe('kc')
   })
 
+  it('says which plan a Kimi membership key belongs to when pay as you go rejects it', async () => {
+    const { result } = await run(
+      { providerId: 'moonshot', apiKey: 'sk-kimi-0123456789abcdef' },
+      json({ error: { message: 'Invalid Authentication', type: 'invalid_authentication_error' } }, 401)
+    )
+    expect(result).toMatchObject({ ok: false, verdict: 'bad-key' })
+    expect(result.message).toMatch(/Kimi Code \(membership plan\)/)
+    expect(result.message).toMatch(/“Membership plan”/)
+    expect(result.message).not.toContain('sk-kimi-0123456789abcdef')
+  })
+
+  it('passes on what the provider said about a rejected key', async () => {
+    const { result } = await run(
+      { providerId: 'kimi-code', apiKey: 'sk-kimi-expired' },
+      json({ error: { message: 'The API Key appears to be invalid or may have expired.', type: 'invalid_authentication_error' } }, 401)
+    )
+    expect(result.verdict).toBe('bad-key')
+    expect(result.message).toMatch(/may have expired/)
+    expect(result.message).toMatch(/kimi\.com\/code/)
+  })
+
   it('distinguishes a wrong model from a wrong address', async () => {
     const bad = await run({ providerId: 'zai', apiKey: 'k', model: 'glm-9' }, json({ error: { message: 'Unknown Model, please check the model code: glm-9' } }, 400))
     expect(bad.result.verdict).toBe('bad-model')

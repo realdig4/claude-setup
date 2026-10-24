@@ -2,7 +2,7 @@
  * Provider setup wizard state: the draft the user edits, how it is initialised (new or editing a profile), validated
  * per step and turned into core requests. Pure (no React, no DOM) — unit-tested in Node.
  */
-import type { ConnectionTestInput, ModelProfile, ModelProfileInput, ModelSlot, ModelTarget, ProviderPreset } from '@shared/types'
+import type { ConnectionTestInput, ModelPreset, ModelProfile, ModelProfileInput, ModelSlot, ModelTarget, ProviderPreset } from '@shared/types'
 import { recordFromRows, rowErrors, rowsFromRecord, type KeyValueRow } from '../keyValueRows'
 import {
   MODEL_SLOTS,
@@ -19,6 +19,7 @@ import {
   modelIdError,
   parseTokenCount,
   profileNameError,
+  stripContextSuffix,
   suggestProfileName
 } from '../logic'
 
@@ -131,6 +132,43 @@ export function withMainModel(
     name: draft.nameTouched ? draft.name : suggestProfileName(preset, main, existingNames),
     compatMode: draft.compatTouched ? draft.compatMode : defaultCompatMode(preset, main)
   }
+}
+
+/** Move a draft to a sibling preset (same service bought another way): keep what the user typed that still applies. */
+export function switchPreset(draft: WizardDraft, to: ProviderPreset, existingNames: readonly string[]): WizardDraft {
+  const fresh = initialDraft(to, { existingNames, defaultTargets: draft.targets })
+  return {
+    ...fresh,
+    regionId: to.regions.some((r) => r.id === draft.regionId) ? draft.regionId : fresh.regionId,
+    apiKey: draft.apiKey,
+    extraEnv: draft.extraEnv,
+    useKeyHelper: draft.useKeyHelper,
+    name: draft.nameTouched ? draft.name : fresh.name,
+    nameTouched: draft.nameTouched
+  }
+}
+
+/**
+ * When the provider's live list says the account gets a bigger window, move untouched default models to their `[1m]`
+ * variant (e.g. Kimi Code K3.1 Pro 256K → 1M on Pro and Max plans). Null when nothing changes.
+ */
+export function upgradeForPlan(
+  preset: ProviderPreset,
+  models: readonly ModelPreset[],
+  draft: WizardDraft,
+  existingNames: readonly string[]
+): WizardDraft | null {
+  const longer = (id: string): string | null => {
+    if (!id || stripContextSuffix(id) !== id) return null
+    const live = models.find((m) => m.id === id)?.liveContext
+    const longId = `${id}[1m]`
+    return live && live >= 1_000_000 && preset.models.some((m) => m.id === longId) ? longId : null
+  }
+  const main = draft.main === preset.defaults.main ? longer(draft.main) : null
+  const fast = draft.fast === defaultFastModel(preset) ? longer(draft.fast) : null
+  if (!main && !fast) return null
+  const next = main ? withMainModel(draft, preset, main, existingNames) : draft
+  return fast ? { ...next, fast } : next
 }
 
 /** Providers whose key can be kept out of settings.json with Claude Code's apiKeyHelper. */

@@ -114,6 +114,7 @@ export function mergeModels(preset: ProviderPreset, live: LiveModel[]): ModelPre
     used.add(key)
     const merged: ModelPreset = { ...p }
     if (merged.context === undefined && lm.context) merged.context = lm.context
+    if (lm.context) merged.liveContext = lm.context
     if (merged.vision === undefined && lm.vision) merged.vision = true
     return merged
   })
@@ -123,7 +124,10 @@ export function mergeModels(preset: ProviderPreset, live: LiveModel[]): ModelPre
     if (used.has(key)) continue
     const longContext = allowSuffix && m.context !== undefined && m.context >= 1_000_000 && !hasContextSuffix(m.id)
     const entry: ModelPreset = { id: longContext ? `${m.id}[1m]` : m.id, label: m.label ?? m.id }
-    if (m.context) entry.context = m.context
+    if (m.context) {
+      entry.context = m.context
+      entry.liveContext = m.context
+    }
     if (m.vision) entry.vision = true
     if (m.thinking) entry.thinking = 'optional'
     extras.push(entry)

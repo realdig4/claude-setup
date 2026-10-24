@@ -311,6 +311,7 @@ export default function ModelsPage(_props: PageProps) {
           open={wizard.open}
           onOpenChange={(open) => setWizard((w) => (w ? { ...w, open } : w))}
           preset={wizard.preset}
+          providers={providers.data}
           profile={wizard.profile}
           existingNames={(profiles.data ?? []).filter((p) => p.id !== wizard.profile?.id).map((p) => p.name)}
           defaultTargets={defaultTargets()}

@@ -8,14 +8,16 @@ import type { CoreContext } from '../context'
 import { cloneJson, editJsonc, pathExists } from '../fs/json'
 import { claudeJsonPath, type EditorVariant } from '../platform/paths'
 import {
-  ensureOnboardingFlag,
   physicalPath,
+  planClaudeJson,
   rawEnv,
   readClaudeSettings,
   removeOwned,
   settingsErrorMessage,
   stringEnv,
+  writeClaudeJson,
   writeClaudeSettings,
+  type ClaudeJsonUpdate,
   type SettingsFile
 } from './claudeSettings'
 import { samePath, vscodeMarkerFor, type ModelApplyMarker, type WrittenFile } from './marker'
@@ -54,7 +56,6 @@ export interface ClaudeCodeWrite {
   /** The marker entry should be replaced by `marker` (also true when nothing needed changing). */
   changed: boolean
   marker?: WrittenFile
-  onboardingSet: boolean
   warnings: string[]
 }
 
@@ -63,7 +64,6 @@ function claudeResult(path: string, ok: boolean, message: string, extra: Partial
   return {
     result: { target: 'claude-code', ok, message, configPath: path, ...(backupId ? { backupId } : {}) },
     changed: false,
-    onboardingSet: false,
     warnings: [],
     ...rest
   }
@@ -80,14 +80,14 @@ async function backup(ctx: CoreContext, reason: string, paths: string[], what: s
 
 /**
  * Write a plan into ~/.claude/settings.json: remove everything Claude Setup owns, then add the plan.
- * `reason` labels the backup; `onboarding` also merges hasCompletedOnboarding into ~/.claude.json.
+ * `reason` labels the backup.
  */
 export async function writeClaudeCodePlan(
   ctx: CoreContext,
   file: SettingsFile,
   plan: ApplyPlan,
   marker: ModelApplyMarker,
-  opts: { reason: string; onboarding: boolean; okMessage: string; unchangedMessage: string }
+  opts: { reason: string; okMessage: string; unchangedMessage: string }
 ): Promise<ClaudeCodeWrite> {
   if (file.error || !file.data) return claudeResult(file.path, false, settingsErrorMessage(file))
   const before = file.data
@@ -118,26 +118,50 @@ export async function writeClaudeCodePlan(
   if (JSON.stringify(data) === JSON.stringify(before)) {
     return claudeResult(file.path, true, opts.unchangedMessage, { changed: true, marker: written, warnings })
   }
-  const saved = await backup(ctx, opts.reason, opts.onboarding ? [file.path, claudeJsonPath()] : [file.path], "Claude Code's settings")
+  const saved = await backup(ctx, opts.reason, [file.path], "Claude Code's settings")
   if ('error' in saved) return claudeResult(file.path, false, saved.error, { warnings })
   try {
     await writeClaudeSettings(file, data)
   } catch (err) {
     return claudeResult(file.path, false, `Couldn't save ${file.path}: ${errorText(err)}`, { warnings, backupId: saved.id })
   }
-
-  let onboardingSet = false
-  if (opts.onboarding) {
-    try {
-      const r = await ensureOnboardingFlag()
-      onboardingSet = r.changed
-      if (r.warning) warnings.push(r.warning)
-    } catch (err) {
-      warnings.push(`Couldn't update ${claudeJsonPath()} (${errorText(err)}), so Claude Code may show its first-run screen once.`)
-    }
-  }
   ctx.log.info('models', `Updated ${file.path} (env: ${Object.keys(plan.env).join(', ') || 'none'})`)
-  return claudeResult(file.path, true, opts.okMessage, { changed: true, marker: written, onboardingSet, warnings, backupId: saved.id })
+  return claudeResult(file.path, true, opts.okMessage, { changed: true, marker: written, warnings, backupId: saved.id })
+}
+
+export interface ClaudeJsonWrite {
+  /** We set hasCompletedOnboarding just now. */
+  onboardingSet: boolean
+  /** The API key is approved in ~/.claude.json (now or already). */
+  keyApproved: boolean
+  warnings: string[]
+}
+
+/**
+ * Update ~/.claude.json for a model setup (first-run flag, API key approval). It is backed up first, and only when
+ * something actually changes — restoring that backup also rolls back MCP servers and project state.
+ */
+export async function updateClaudeJson(ctx: CoreContext, update: ClaudeJsonUpdate, reason: string): Promise<ClaudeJsonWrite> {
+  const unchanged = (warning: string): ClaudeJsonWrite => ({ onboardingSet: false, keyApproved: false, warnings: [warning] })
+  const failed = (err: unknown): string =>
+    `Couldn't update ${claudeJsonPath()} (${errorText(err)}), so Claude Code may show its first-run screen or ask about the API key once.`
+  let plan: Awaited<ReturnType<typeof planClaudeJson>>
+  try {
+    plan = await planClaudeJson(update)
+  } catch (err) {
+    return unchanged(failed(err))
+  }
+  const warnings = plan.warning ? [plan.warning] : []
+  if (!plan.data) return { onboardingSet: false, keyApproved: plan.keyApproved, warnings }
+  const saved = await backup(ctx, reason, [plan.path], "Claude Code's ~/.claude.json")
+  if ('error' in saved) return { onboardingSet: false, keyApproved: false, warnings: [...warnings, saved.error] }
+  try {
+    await writeClaudeJson(plan)
+  } catch (err) {
+    return { onboardingSet: false, keyApproved: false, warnings: [...warnings, failed(err)] }
+  }
+  ctx.log.info('models', `Updated ${plan.path}${plan.onboardingSet ? ' (first-run screen skipped)' : ''}${update.approveKey ? ' (API key approved)' : ''}`)
+  return { onboardingSet: plan.onboardingSet, keyApproved: plan.keyApproved, warnings }
 }
 
 /** Remove everything Claude Setup owns from ~/.claude/settings.json (reset to the official setup). */
