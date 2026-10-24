@@ -1,0 +1,61 @@
+{
+  "name": "claude-setup",
+  "productName": "Claude Setup",
+  "version": "0.1.0",
+  "description": "Find, install and manage MCP servers, custom models, skills and plugins for Claude Desktop, Claude Code and VS Code.",
+  "main": "./out/main/index.js",
+  "author": "Claude Setup",
+  "license": "MIT",
+  "bin": {
+    "claude-setup": "./bin/claude-setup.js",
+    "claude-setup-mcp": "./bin/claude-setup-mcp.js"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "cli": "node ./bin/claude-setup.js",
+    "mcp": "node ./bin/claude-setup-mcp.js",
+    "dist": "electron-vite build && electron-builder",
+    "dist:win": "electron-vite build && electron-builder --win",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:linux": "electron-vite build && electron-builder --linux"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "commander": "^15.0.0",
+    "cross-spawn": "^7.0.6",
+    "jsonc-parser": "^3.3.1",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/cross-spawn": "^6.0.6",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "lucide-react": "^1.61.0",
+    "motion": "^14.6.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5",
+    "zustand": "^5.0.16"
+  }
+}
