@@ -1,0 +1,129 @@
+{
+  "qualifiedName": "brave",
+  "displayName": "Brave Search",
+  "description": "Search the web with Brave's independent index — web, news, images, and videos. Bring your own subscription token from the [Brave Search API dashboard](https://api-dashboard.search.brave.com).",
+  "iconUrl": "https://api.smithery.ai/servers/brave/icon",
+  "remote": true,
+  "deploymentUrl": "https://brave.run.tools",
+  "connections": [
+    {
+      "type": "http",
+      "deploymentUrl": "https://brave.run.tools",
+      "configSchema": {
+        "type": "object",
+        "required": [
+          "braveApiKey"
+        ],
+        "properties": {
+          "braveApiKey": {
+            "type": "string",
+            "title": "Brave API Key",
+            "x-order": 0,
+            "description": "Your Brave Search subscription token. Get one at [api-dashboard.search.brave.com](https://api-dashboard.search.brave.com/app/keys)."
+          }
+        }
+      }
+    }
+  ],
+  "security": null,
+  "tools": [
+    {
+      "name": "brave_web_search",
+      "description": "Performs web searches using the Brave Search API and returns comprehensive search results with rich metadata. To chain into local-POI enrichment, pass `result_filter=locations` and feed the resulting `locations.results[].id` values into `brave_local_search`. To chain into the AI summarizer, pass `summary=true` and feed the returned `summarizer.key` into `brave_summarizer`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "maxLength": 400,
+            "description": "Search query (max 400 characters and 50 words)."
+          },
+          "count": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 20,
+            "minimum": 1,
+            "description": "Number of results to return (max 20; default 20)."
+          },
+          "units": {
+            "enum": [
+              "metric",
+              "imperial"
+            ],
+            "type": "string",
+            "description": "Measurement system used in result content."
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "maximum": 9,
+            "minimum": 0,
+            "description": "Pagination offset (max 9, in units of `count`)."
+          },
+          "country": {
+            "type": "string",
+            "default": "US",
+            "maxLength": 2,
+            "minLength": 2,
+            "description": "2-letter country code (ISO 3166-1 alpha-2). Defaults to US."
+          },
+          "summary": {
+            "type": "boolean",
+            "description": "Set to true to request a summarizer key in the response. Pair with `brave_summarizer` to fetch the AI-generated summary text. Pro AI tier required."
+          },
+          "ui_lang": {
+            "type": "string",
+            "default": "en-US",
+            "description": "User interface language for the response, in the form <lang>-<country> (e.g. en-US)."
+          },
+          "freshness": {
+            "type": "string",
+            "description": "Filter results by recency. Use pd (past day), pw (past week), pm (past month), py (past year), or a YYYY-MM-DDtoYYYY-MM-DD range."
+          },
+          "goggles_id": {
+            "type": "string",
+            "description": "Goggles ID for re-ranked results. See https://search.brave.com/help/goggles."
+          },
+          "safesearch": {
+            "enum": [
+              "off",
+              "moderate",
+              "strict"
+            ],
+            "type": "string",
+            "default": "moderate",
+            "description": "Filter level for adult content."
+          },
+          "spellcheck": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to spellcheck the query."
+          },
+          "search_lang": {
+            "type": "string",
+            "default": "en",
+            "description": "2-letter language code for the search. Defaults to en."
+          },
+          "result_filter": {
+            "type": "string",
+            "description": "Comma-separated list of result types to include. Available values: discussions, faq, infobox, news, query, summarizer, videos, web, locations. Use `locations` to chain into `brave_local_pois`."
+          },
+          "extra_snippets": {
+            "type": "boolean",
+            "description": "Return up to 5 extra alternate snippets per result. Premium plans only."
+          },
+          "text_decorations": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include decoration markers (e.g. highlighting) in result strings."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object"
+      }
+    }
+  ],
+  "resources": null,
+  "prompts": null
+}

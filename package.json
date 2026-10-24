@@ -21,7 +21,9 @@
     "dist": "electron-vite build && electron-builder",
     "dist:win": "electron-vite build && electron-builder --win",
     "dist:mac": "electron-vite build && electron-builder --mac",
-    "dist:linux": "electron-vite build && electron-builder --linux"
+    "dist:linux": "electron-vite build && electron-builder --linux",
+    "icons": "node scripts/make-icons.mjs",
+    "build:seed": "node scripts/build-seed.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "^2.4.0",
@@ -57,5 +59,12 @@
     "vite": "^8.3.5",
     "vitest": "^5.0.5",
     "zustand": "^5.0.16"
-  }
+  },
+  "files": [
+    "bin",
+    "out/main",
+    "out/preload",
+    "out/renderer",
+    "resources"
+  ]
 }

@@ -12,7 +12,7 @@ import { createModelsApi } from './models'
 import { fixPath } from './platform/exec'
 import { createRuntimesApi } from './platform/runtimes'
 import { createProxyApi } from './proxy'
-import { createCatalogApi } from './registry'
+import { createCatalogService } from './registry'
 import { createSelfApi } from './self'
 import { createServersApi } from './servers'
 import { createTargetsApi } from './targets'
@@ -30,7 +30,8 @@ export async function createCore(options: CoreOptions): Promise<Core> {
   const ctx = await createContext(options)
 
   const app = createAppApi(ctx)
-  const catalog = createCatalogApi(ctx)
+  const catalogService = createCatalogService(ctx)
+  const catalog = catalogService.api
   const targets = createTargetsApi(ctx)
   const servers = createServersApi(ctx, { catalog })
   const proxy = createProxyApi(ctx)
@@ -40,6 +41,9 @@ export async function createCore(options: CoreOptions): Promise<Core> {
   const extensions = createExtensionsApi(ctx)
   const doctor = createDoctorApi(ctx, { targets, servers, models, runtimes, proxy })
   const self = createSelfApi(ctx, { servers, targets })
+
+  // The GUI is long-lived while the CLI / MCP server may change state.json meanwhile: pick those changes up.
+  const stopWatching = options.surface === 'gui' ? ctx.state.watch(2_000, (key) => ctx.events.emitEvent('state', { key })) : () => {}
 
   return {
     ctx,
@@ -55,7 +59,9 @@ export async function createCore(options: CoreOptions): Promise<Core> {
     runtimes,
     self,
     async dispose() {
+      stopWatching()
       await proxy.stop().catch(() => {})
+      await catalogService.close().catch(() => {})
     }
   }
 }

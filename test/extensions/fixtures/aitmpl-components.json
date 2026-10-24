@@ -1,0 +1,477 @@
+{
+  "agents": [
+    {
+      "name": "accessibility-tester",
+      "path": "accessibility/accessibility-tester.md",
+      "category": "accessibility",
+      "type": "agent",
+      "description": "Use this agent when conducting comprehensive accessibility audits, WCAG 2.2 compliance assessments, or evaluating UI components and full codebases for barriers that affect users with disabilities. Invoke when you need structured findings mapped to specific WCAG criteria, hybrid automated-plus-manual coverage, and actionable remediation guidance aligned with ADA, Section 508, and the European Accessibility Act (EAA, effective June 2025).\n\n<example>\nContext: A product team is shipping a redesigned checkout flow and needs to verify it meets WCAG 2.2 AA before release.\nuser: \"Can you audit the checkout flow components in src/components/checkout/ for accessibility issues?\"\nassistant: \"I'll perform a hybrid accessibility audit of your checkout flow. I'll run automated scans with axe-core and pa11y to catch programmatic violations, then execute a manual checklist covering keyboard navigation, focus visibility, screen reader compatibility, color contrast, touch target sizing, and accessible authentication (WCAG 2.2 criterion 3.3.8). Each finding will be mapped to the relevant WCAG 2.2 criterion and severity level, with a remediation recommendation and verification step.\"\n<commentary>\nUse the accessibility-tester when you need rigorous, evidence-based accessibility assessment of specific components or user flows ahead of release milestones. The hybrid approach catches violations that automated tools miss.\n</commentary>\n</example>\n\n<example>\nContext: A company's legal team has flagged potential ADA, Section 508, and EAA compliance exposure and requests a full codebase scan.\nuser: \"We need a full accessibility compliance scan across the entire frontend codebase to confirm ADA, Section 508, and EAA readiness. Can you identify all WCAG 2.2 AA gaps?\"\nassistant: \"I'll conduct a full-codebase accessibility compliance audit targeting WCAG 2.2 AA conformance. The audit will combine automated scanning across all UI components with a prioritized manual verification pass covering the 9 new WCAG 2.2 criteria, ARIA pattern correctness, screen reader behaviour, focus management, reduced-motion support, and accessible authentication flows. I'll deliver a structured findings report with WCAG criterion numbers, severity ratings, affected elements, remediation steps, and a summary scorecard showing critical/high/medium/low counts — with a legal compliance mapping showing the specific WCAG version each framework requires (Section 508: WCAG 2.0 AA; ADA Title II/III: WCAG 2.1 AA; EAA: EN 301 549, approx. WCAG 2.1 AA).\"\n<commentary>\nInvoke accessibility-tester for organization-wide compliance sweeps when legal deadlines or regulatory requirements demand documented, prioritized evidence of WCAG conformance across the full product.\n</commentary>\n</example>",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 344,
+      "skillspector": {
+        "score": 21,
+        "severity": "MEDIUM",
+        "recommendation": "CAUTION",
+        "issueCount": 6,
+        "analysis": "partial",
+        "findings": [
+          {
+            "id": "EA5",
+            "category": "Excessive Agency",
+            "severity": "MEDIUM",
+            "title": "External Model or Provider Selection",
+            "file": "accessibility-tester.md",
+            "line": 5,
+            "count": 1
+          },
+          {
+            "id": "RP1",
+            "category": "MCP Rug Pull",
+            "severity": "MEDIUM",
+            "title": "MCP server referenced without pinned version: 'npx @axe-core/cli'.",
+            "file": "accessibility-tester.md",
+            "line": 18,
+            "count": 2
+          },
+          {
+            "id": "RP1",
+            "category": "MCP Rug Pull",
+            "severity": "MEDIUM",
+            "title": "MCP server referenced without pinned version: 'npx lighthouse'.",
+            "file": "accessibility-tester.md",
+            "line": 19,
+            "count": 1
+          },
+          {
+            "id": "RP1",
+            "category": "MCP Rug Pull",
+            "severity": "MEDIUM",
+            "title": "MCP server referenced without pinned version: 'npx pa11y'.",
+            "file": "accessibility-tester.md",
+            "line": 20,
+            "count": 1
+          },
+          {
+            "id": "RP1",
+            "category": "MCP Rug Pull",
+            "severity": "MEDIUM",
+            "title": "MCP server referenced without pinned version: 'npx playwright'.",
+            "file": "accessibility-tester.md",
+            "line": 28,
+            "count": 1
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:30:55Z"
+      }
+    },
+    {
+      "name": "ai-ethics-advisor",
+      "path": "ai-specialists/ai-ethics-advisor.md",
+      "category": "ai-specialists",
+      "type": "agent",
+      "description": "AI ethics and responsible AI development specialist. Use when reviewing an AI system for bias, fairness violations, or regulatory compliance gaps; when generating a model card, algorithmic impact assessment, or ethics review document; or when an AI feature touches a protected class or high-stakes domain (hiring, healthcare, credit, law enforcement).\n\n<example>\nContext: A team is about to deploy a resume screening model trained on historical hiring data.\nuser: \"Review our resume screener for bias before we go live\"\nassistant: \"I'll run a full Ethical Impact Assessment: audit the training data for demographic representation gaps, apply demographic parity and equalized opportunity metrics, map the system against EU AI Act high-risk requirements, and produce a model card with required mitigations before deployment.\"\n</example>\n\n<example>\nContext: A healthcare startup is building an AI triage system that routes patients to specialists.\nuser: \"We need an ethics review of our patient triage AI\"\nassistant: \"I'll assess the triage AI across four dimensions: protected-class disparities in routing decisions, HIPAA and FDA AI/ML guidance compliance, explainability requirements for clinical staff, and a human-override escalation path — and deliver a compliance gap analysis and monitoring plan.\"\n</example>\n\n<example>\nContext: A fintech company wants to deploy an LLM-based credit scoring agent with tool access.\nuser: \"Audit our agentic credit scoring system for ethical risks\"\nassistant: \"For an agentic system in a high-stakes financial domain I'll cover both classical fairness (Equal Credit Opportunity Act, demographic parity across protected classes) and agentic-specific risks: prompt injection resistance, minimal-permission tool access, human oversight checkpoints before irreversible credit decisions, and inter-agent trust boundaries.\"\n</example>",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 719,
+      "skillspector": {
+        "score": 9,
+        "severity": "LOW",
+        "recommendation": "CAUTION",
+        "issueCount": 1,
+        "analysis": "partial",
+        "findings": [
+          {
+            "id": "EA5",
+            "category": "Excessive Agency",
+            "severity": "MEDIUM",
+            "title": "External Model or Provider Selection",
+            "file": "ai-ethics-advisor.md",
+            "line": 4,
+            "count": 1
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    },
+    {
+      "name": "accessibility-tester",
+      "path": "development-tools/accessibility-tester.md",
+      "category": "development-tools",
+      "type": "agent",
+      "description": "Use this agent when you need comprehensive accessibility testing, WCAG compliance verification, or assessment of assistive technology support. Specifically:\\n\\n<example>\\nContext: A web application is preparing for launch and needs to ensure compliance with accessibility standards before release.\\nuser: \"Can you test our web app for accessibility issues? We need to know if it works with screen readers and keyboard navigation, and if we meet WCAG standards.\"\\nassistant: \"I'll conduct a comprehensive accessibility audit covering WCAG 2.1 Level AA compliance, screen reader compatibility (NVDA, JAWS, VoiceOver), full keyboard navigation testing, color contrast verification, focus management, and ARIA implementation. I'll identify violations, prioritize by severity, and provide specific remediation guidance.\"\\n<commentary>\\nInvoke accessibility-tester when an application needs formal accessibility testing and compliance verification. This agent conducts systematic testing across multiple accessibility dimensions, unlike qa-expert which focuses on general quality assurance.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: Users with disabilities reported difficulty using the mobile app, and the team wants to understand and fix accessibility barriers.\\nuser: \"We're getting feedback that disabled users can't use our mobile app properly. Some can't navigate with the keyboard and others have trouble with the screen reader. What's wrong?\"\\nassistant: \"I'll test your mobile app with assistive technologies to identify specific accessibility barriers. I'll check touch target sizing, gesture alternatives, screen reader compatibility, keyboard navigation logic, and platform-specific accessibility features. I'll document each barrier with a clear explanation of the impact on users and concrete fixes needed.\"\\n<commentary>\\nUse accessibility-tester to diagnose accessibility problems reported by users and design solutions. This agent traces user complaints to specific accessibility failures and recommends fixes.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: A development team has built a complex form with dynamic validation and wants to ensure it's accessible before merging the feature.\\nuser: \"We built a new checkout form with real-time validation. Can you check if it's accessible? We want to make sure errors are announced properly and the keyboard flow works.\"\\nassistant: \"I'll review the form's accessibility including label associations, error identification and announcement, field instructions, focus management during validation, keyboard navigation flow, and screen reader announcements. I'll identify any ARIA violations, test with actual assistive technologies, and verify the form meets WCAG standards.\"\\n<commentary>\\nInvoke accessibility-tester for component or feature-level accessibility validation before integration. This agent verifies specific UI patterns work correctly with assistive technology, catching issues before they reach users.\\n</commentary>\\n</example>",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 449,
+      "skillspector": {
+        "score": 0,
+        "severity": "LOW",
+        "recommendation": "CAUTION",
+        "issueCount": 0,
+        "analysis": "partial",
+        "findings": [],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    }
+  ],
+  "commands": [
+    {
+      "name": "supply-chain-audit",
+      "path": "analysis/supply-chain-audit.md",
+      "category": "analysis",
+      "type": "command",
+      "description": "Audit a project for software supply chain risk, including dependency vulnerabilities, lockfile issues, malicious package indicators, SBOM coverage, and license concerns.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 108,
+      "skillspector": {
+        "score": 17,
+        "severity": "LOW",
+        "recommendation": "CAUTION",
+        "issueCount": 1,
+        "analysis": "partial",
+        "findings": [
+          {
+            "id": "PE3",
+            "category": "Privilege Escalation",
+            "severity": "HIGH",
+            "title": "Credential Access",
+            "file": "supply-chain-audit.md",
+            "line": 54,
+            "count": 1
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-23T03:36:57Z"
+      }
+    },
+    {
+      "name": "act",
+      "path": "automation/act.md",
+      "category": "automation",
+      "type": "command",
+      "description": "Execute GitHub Actions locally using act",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 355,
+      "skillspector": {
+        "score": 15,
+        "severity": "LOW",
+        "recommendation": "SAFE",
+        "issueCount": 1,
+        "analysis": "complete",
+        "findings": [
+          {
+            "id": "PE3",
+            "category": "Privilege Escalation",
+            "severity": "HIGH",
+            "title": "Credential Access",
+            "file": "act.md",
+            "line": 52,
+            "count": 1
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    }
+  ],
+  "mcps": [
+    {
+      "name": "elevenlabs",
+      "path": "audio/elevenlabs.json",
+      "category": "audio",
+      "type": "mcp",
+      "description": "Official ElevenLabs MCP for text-to-speech, voice cloning, audio processing, and transcription. Generate AI voices, design custom voices, isolate audio, create sound effects, and more.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 444,
+      "skillspector": {
+        "score": 0,
+        "severity": "LOW",
+        "recommendation": "SAFE",
+        "issueCount": 0,
+        "analysis": "complete",
+        "findings": [],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:30:55Z"
+      }
+    }
+  ],
+  "settings": [
+    {
+      "name": "bedrock-configuration",
+      "path": "api/bedrock-configuration.json",
+      "category": "api",
+      "type": "setting",
+      "description": "Configure Claude Code to use Amazon Bedrock for AI model access. Enables enterprise-grade deployment with AWS billing and compliance features, ideal for organizations already using AWS infrastructure.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 194,
+      "skillspector": {
+        "score": 0,
+        "severity": "LOW",
+        "recommendation": "SAFE",
+        "issueCount": 0,
+        "analysis": "complete",
+        "findings": [],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    },
+    {
+      "name": "colorful-statusline",
+      "path": "statusline/colorful-statusline.json",
+      "category": "statusline",
+      "type": "setting",
+      "description": "Colorful status line with ANSI color codes for enhanced visual appeal. Uses colors to distinguish between different information types: blue for model, green for directory, yellow for git branch.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 3783,
+      "skillspector": {
+        "score": 0,
+        "severity": "LOW",
+        "recommendation": "SAFE",
+        "issueCount": 0,
+        "analysis": "complete",
+        "findings": [],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    },
+    {
+      "name": "context-monitor",
+      "path": "statusline/context-monitor.json",
+      "category": "statusline",
+      "type": "setting",
+      "description": "Real-time Claude Code context usage monitor with visual progress bars, color-coded alerts, session analytics (cost, duration, lines changed), and auto-compact warnings. Tracks conversation context consumption and provides visual feedback to prevent session interruptions.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 15734,
+      "skillspector": {
+        "score": 22,
+        "severity": "MEDIUM",
+        "recommendation": "CAUTION",
+        "issueCount": 4,
+        "analysis": "complete",
+        "findings": [
+          {
+            "id": "LP3",
+            "category": "MCP Least Privilege",
+            "severity": "MEDIUM",
+            "title": "Skill declares no tool scope ('permissions' or 'allowed-tools') but code capabilities were detected: file_read, shell.",
+            "file": "SKILL.md",
+            "line": 1,
+            "count": 1
+          },
+          {
+            "id": "AST4",
+            "category": "Dangerous Code Execution",
+            "severity": "MEDIUM",
+            "title": "subprocess module call",
+            "file": "context-monitor.py",
+            "line": 18,
+            "count": 3
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:30:55Z"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "name": "change-logger",
+      "path": "automation/change-logger.json",
+      "category": "automation",
+      "type": "hook",
+      "description": "Log every file mutation to CSV for demo prep. Records timestamp, tool, file path, action, and details for Edit, MultiEdit, Write, and Bash operations. Output: .claude/critical_log_changes.csv",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 163,
+      "skillspector": {
+        "score": 7,
+        "severity": "LOW",
+        "recommendation": "CAUTION",
+        "issueCount": 1,
+        "analysis": "partial",
+        "findings": [
+          {
+            "id": "LP3",
+            "category": "MCP Least Privilege",
+            "severity": "MEDIUM",
+            "title": "Skill declares no tool scope ('permissions' or 'allowed-tools') but code capabilities were detected: file_write.",
+            "file": "SKILL.md",
+            "line": 1,
+            "count": 1
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    },
+    {
+      "name": "file-protection",
+      "path": "security/file-protection.json",
+      "category": "security",
+      "type": "hook",
+      "description": "Protect critical files from accidental modification. Prevents editing of important system files, configuration files, and production code.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 1668,
+      "skillspector": {
+        "score": 0,
+        "severity": "LOW",
+        "recommendation": "SAFE",
+        "issueCount": 0,
+        "analysis": "complete",
+        "findings": [],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    }
+  ],
+  "skills": [
+    {
+      "name": "agent-management",
+      "path": "ai-maestro/agent-management",
+      "category": "ai-maestro",
+      "type": "skill",
+      "description": "Create, manage, and orchestrate AI agents using the AI Maestro CLI. Use when the user asks to \"create agent\", \"list agents\", \"delete agent\", \"hibernate agent\", \"wake agent\", \"install plugin\", \"show agent\", \"restart agent\", or any agent lifecycle management task.",
+      "author": "",
+      "repo": "",
+      "version": "",
+      "license": "",
+      "keywords": [],
+      "downloads": 687,
+      "references": [],
+      "skillspector": {
+        "score": 0,
+        "severity": "LOW",
+        "recommendation": "CAUTION",
+        "issueCount": 0,
+        "analysis": "partial",
+        "findings": [],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    },
+    {
+      "name": "agents-autogpt",
+      "path": "ai-research/agents-autogpt",
+      "category": "ai-research",
+      "type": "skill",
+      "description": "Autonomous AI agent platform for building and deploying continuous agents. Use when creating visual workflow agents, deploying persistent autonomous agents, or building complex multi-step AI automation systems.",
+      "author": "Orchestra Research",
+      "repo": "",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": [
+        "Agents",
+        "AutoGPT",
+        "Autonomous Agents",
+        "Workflow Automation",
+        "Visual Builder",
+        "AI Platform"
+      ],
+      "downloads": 329,
+      "references": [
+        "references/advanced-usage.md",
+        "references/troubleshooting.md"
+      ],
+      "skillspector": {
+        "score": 62,
+        "severity": "HIGH",
+        "recommendation": "DO_NOT_INSTALL",
+        "issueCount": 9,
+        "analysis": "partial",
+        "findings": [
+          {
+            "id": "TM2",
+            "category": "Tool Misuse",
+            "severity": "HIGH",
+            "title": "Chaining Abuse",
+            "file": "references/troubleshooting.md",
+            "line": 346,
+            "count": 1
+          },
+          {
+            "id": "PE3",
+            "category": "Privilege Escalation",
+            "severity": "HIGH",
+            "title": "Credential Access",
+            "file": "SKILL.md",
+            "line": 48,
+            "count": 2
+          },
+          {
+            "id": "PE3",
+            "category": "Privilege Escalation",
+            "severity": "HIGH",
+            "title": "Credential Access",
+            "file": "references/troubleshooting.md",
+            "line": 60,
+            "count": 3
+          },
+          {
+            "id": "PE2",
+            "category": "Privilege Escalation",
+            "severity": "MEDIUM",
+            "title": "Sudo/Root Execution",
+            "file": "references/troubleshooting.md",
+            "line": 12,
+            "count": 2
+          },
+          {
+            "id": "SSRF2",
+            "category": "Server-Side Request Forgery",
+            "severity": "MEDIUM",
+            "title": "Internal Network Request",
+            "file": "references/troubleshooting.md",
+            "line": 176,
+            "count": 1
+          }
+        ],
+        "version": "2.12.0",
+        "scannedAt": "2026-10-17T20:36:45Z"
+      }
+    }
+  ],
+  "plugins": []
+}

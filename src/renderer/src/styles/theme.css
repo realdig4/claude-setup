@@ -1,0 +1,180 @@
+/*
+ * Design tokens for Claude Setup.
+ *
+ * Light values live in @theme (they become Tailwind utilities such as bg-surface, text-fg-muted, border-line).
+ * Dark values override the same variables under :root[data-theme='dark'] (see base.css), so every utility
+ * adapts automatically — never hard-code colors, always use these tokens.
+ *
+ * The default Tailwind palette is intentionally disabled (--color-*: initial) to keep the UI consistent.
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme static {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Neutrals — warm, paper-like */
+  --color-canvas: oklch(0.982 0.004 85); /* main content panel */
+  --color-sidebar: oklch(0.954 0.007 80); /* window chrome: title bar + sidebar */
+  --color-surface: oklch(0.997 0.002 85); /* cards, inputs */
+  --color-surface-2: oklch(0.962 0.006 80); /* hover fills, secondary buttons */
+  --color-surface-3: oklch(0.93 0.008 78); /* pressed states, tracks, chips */
+  --color-elevated: oklch(1 0 0); /* dialogs, menus, toasts */
+  --color-line: oklch(0.905 0.008 78); /* hairline borders */
+  --color-line-strong: oklch(0.85 0.01 76); /* hover borders, separators that must be visible */
+  --color-fg: oklch(0.235 0.012 55); /* primary text */
+  --color-fg-muted: oklch(0.47 0.012 60); /* secondary text */
+  --color-fg-subtle: oklch(0.53 0.011 65); /* tertiary text, placeholders, meta (≥4.5:1 on canvas & sidebar) */
+  --color-inverse: oklch(0.26 0.012 55); /* tooltip background */
+  --color-fg-inverse: oklch(0.975 0.004 85); /* text on inverse */
+  --color-overlay: oklch(0.22 0.012 55 / 0.38); /* modal scrim */
+
+  /* Accent — Claude-inspired terracotta (accent-500 = #D97757) */
+  --color-accent-50: oklch(0.977 0.012 50);
+  --color-accent-100: oklch(0.951 0.027 48);
+  --color-accent-200: oklch(0.905 0.054 45);
+  --color-accent-300: oklch(0.84 0.088 42);
+  --color-accent-400: oklch(0.76 0.118 40);
+  --color-accent-500: oklch(0.672 0.131 38.8);
+  --color-accent-600: oklch(0.585 0.135 37);
+  --color-accent-700: oklch(0.505 0.122 36);
+  --color-accent-800: oklch(0.42 0.1 35);
+  --color-accent-900: oklch(0.345 0.075 35);
+  --color-accent-950: oklch(0.255 0.05 35);
+
+  --color-accent: oklch(0.672 0.131 38.8); /* brand: indicators, rings, glows (decorative) */
+  --color-accent-solid: oklch(0.57 0.135 37); /* primary buttons (AA with accent-fg) */
+  --color-accent-solid-hover: oklch(0.52 0.13 36);
+  --color-accent-fg: oklch(0.995 0.003 60); /* text on accent-solid */
+  --color-accent-text: oklch(0.51 0.125 37); /* links, accent icons, accent text */
+  --color-accent-soft: oklch(0.955 0.024 50); /* tinted backgrounds (selected) */
+  --color-accent-line: oklch(0.86 0.065 44); /* tinted borders */
+  --color-ring: oklch(0.6 0.135 37); /* focus ring (≥3:1 against every surface) */
+
+  /* Semantic */
+  --color-success: oklch(0.63 0.15 150);
+  --color-success-text: oklch(0.48 0.12 152);
+  --color-success-soft: oklch(0.958 0.035 155);
+  --color-success-line: oklch(0.86 0.075 153);
+
+  --color-warn: oklch(0.77 0.155 72);
+  --color-warn-text: oklch(0.52 0.115 60);
+  --color-warn-soft: oklch(0.968 0.04 88);
+  --color-warn-line: oklch(0.875 0.085 82);
+
+  --color-danger: oklch(0.6 0.2 27);
+  --color-danger-solid: oklch(0.545 0.175 27);
+  --color-danger-solid-hover: oklch(0.5 0.165 27);
+  --color-danger-text: oklch(0.51 0.175 27);
+  --color-danger-soft: oklch(0.962 0.022 25);
+  --color-danger-line: oklch(0.875 0.06 25);
+
+  --color-info: oklch(0.63 0.14 250);
+  --color-info-text: oklch(0.49 0.13 255);
+  --color-info-soft: oklch(0.962 0.02 250);
+  --color-info-line: oklch(0.87 0.05 250);
+
+  /* Typography */
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+
+  /* Elevation — colors come from --elev-* so shadows adapt to the theme */
+  --shadow-xs: 0 1px 2px 0 var(--elev-1);
+  --shadow-sm: 0 1px 1px 0 var(--elev-1), 0 2px 4px -1px var(--elev-1);
+  --shadow-md: 0 1px 2px 0 var(--elev-1), 0 4px 12px -2px var(--elev-2);
+  --shadow-lg: 0 2px 4px -1px var(--elev-1), 0 12px 28px -6px var(--elev-3);
+  --shadow-xl: 0 4px 8px -2px var(--elev-2), 0 24px 56px -12px var(--elev-4);
+  --shadow-2xl: 0 8px 16px -4px var(--elev-2), 0 40px 80px -20px var(--elev-4);
+
+  /* Motion */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snappy: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+  --animate-indeterminate: indeterminate 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  --animate-ping-soft: ping-soft 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-spin-slow: spin 2.4s linear infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 180% 0;
+    }
+    100% {
+      background-position: -80% 0;
+    }
+  }
+
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-110%);
+    }
+    100% {
+      transform: translateX(260%);
+    }
+  }
+
+  @keyframes ping-soft {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    75%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+}
+
+/* Electron window chrome helpers */
+@utility drag-region {
+  -webkit-app-region: drag;
+  app-region: drag;
+  user-select: none;
+}
+
+@utility no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+/* Same ring the whole app uses; combine with variants, e.g. focus-visible:focus-ring */
+@utility focus-ring {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Warm terracotta glow for hero areas (use on a positioned element, e.g. a Card with variant="hero") */
+@utility hero-glow {
+  background-image:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in oklab, var(--color-accent) 16%, transparent) 0%, transparent 52%),
+    radial-gradient(90% 120% at 100% 0%, color-mix(in oklab, var(--color-accent-300) 12%, transparent) 0%, transparent 60%);
+}
+
+/* Faint dotted texture for empty/hero backgrounds */
+@utility dot-grid {
+  background-image: radial-gradient(color-mix(in oklab, var(--color-fg) 9%, transparent) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Skeleton shimmer surface */
+@utility skeleton-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-surface-3) 20%,
+    color-mix(in oklab, var(--color-surface-3) 55%, var(--color-surface)) 40%,
+    var(--color-surface-3) 60%
+  );
+  background-size: 220% 100%;
+}

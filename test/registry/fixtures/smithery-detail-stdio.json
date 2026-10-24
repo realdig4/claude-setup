@@ -1,0 +1,33 @@
+{
+  "qualifiedName": "hugeicons/mcp-server",
+  "displayName": "Hugeicons MCP Server",
+  "description": "Integrate Hugeicons seamlessly into your applications. Discover icons, access platform-specific usage instructions, and enhance your projects with comprehensive documentation and examples.",
+  "iconUrl": "https://www.google.com/s2/favicons?domain=hugeicons.com&sz=64",
+  "remote": false,
+  "deploymentUrl": null,
+  "connections": [
+    {
+      "type": "stdio",
+      "bundleUrl": "https://backend.smithery.ai/storage/v1/object/public/bundles/@hugeicons/mcp-server/server.mcpb",
+      "runtime": "node",
+      "configSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    }
+  ],
+  "security": null,
+  "tools": [
+    {
+      "name": "list_icons",
+      "description": "Get a list of all available Hugeicons icons",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "resources": [],
+  "prompts": []
+}

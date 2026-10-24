@@ -1,0 +1,70 @@
+{
+  "servers": [
+    {
+      "id": "50f26566-7dfe-4842-a5b8-1a9407fb91f4",
+      "qualifiedName": "brave",
+      "namespace": "brave",
+      "slug": "",
+      "displayName": "Brave Search",
+      "description": "Search the web with Brave's independent index — web, news, images, and videos. Bring your own subscription token from the [Brave Search API dashboard](https://api-dashboard.search.brave.com).",
+      "iconUrl": "https://api.smithery.ai/servers/brave/icon",
+      "verified": true,
+      "useCount": 87579,
+      "remote": true,
+      "isDeployed": true,
+      "unlisted": false,
+      "inactive": false,
+      "createdAt": "2025-09-05T18:07:47.018Z",
+      "homepage": "https://brave.com/search/api/",
+      "bySmithery": true,
+      "owner": "org_01KPBXJTDN7ASH7MJ3958C05QY",
+      "score": null
+    },
+    {
+      "id": "a2d7f090-292e-4145-a7ef-f1a7b6b061be",
+      "qualifiedName": "upstash/context7-mcp",
+      "namespace": "upstash",
+      "slug": "context7-mcp",
+      "displayName": "Context7",
+      "description": "Fetch up-to-date, version-specific documentation and code examples directly into your prompts. Enhance your coding experience by eliminating outdated information and hallucinated APIs. Simply add `use context7` to your questions for accurate and relevant answers.",
+      "iconUrl": "https://api.smithery.ai/servers/upstash/context7-mcp/icon",
+      "verified": true,
+      "useCount": 5563,
+      "remote": true,
+      "isDeployed": true,
+      "unlisted": false,
+      "inactive": false,
+      "createdAt": "2025-04-12T07:00:21.424Z",
+      "homepage": "https://github.com/upstash/context7#readme",
+      "bySmithery": false,
+      "owner": "org_01KNB6YN4CN91PZ763VVYX3PB2",
+      "score": null
+    },
+    {
+      "id": "0023fbec-debf-4f94-8bab-0f5f7aa0e331",
+      "qualifiedName": "dddlli/pdf-reader-mcp",
+      "namespace": "dddlli",
+      "slug": "pdf-reader-mcp",
+      "displayName": "pdf-reader-mcp",
+      "description": "",
+      "iconUrl": "https://www.google.com/s2/favicons?domain=github.com&sz=64",
+      "verified": false,
+      "useCount": 0,
+      "remote": null,
+      "isDeployed": false,
+      "unlisted": false,
+      "inactive": false,
+      "createdAt": "2025-10-31T10:28:10.618Z",
+      "homepage": "https://github.com/dddlli/pdf-reader-mcp",
+      "bySmithery": false,
+      "owner": "org_01KNBSQMYD8CCZAF1RP2VK45BZ",
+      "score": null
+    }
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "pageSize": 3,
+    "totalPages": 2,
+    "totalCount": 5
+  }
+}

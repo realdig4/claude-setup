@@ -1,0 +1,77 @@
+[
+  {
+    "mcpId": "github.com/postmanlabs/postman-mcp-server",
+    "githubUrl": "https://github.com/postmanlabs/postman-mcp-server",
+    "name": "Postman API Tools",
+    "author": "postmanlabs",
+    "description": "Enables AI assistants to manage Postman workspaces, collections, environments, and API testing through natural language interactions, with support for code generation and API automation workflows.",
+    "codiconIcon": "server-environment",
+    "logoUrl": "https://avatars.githubusercontent.com/u/10251060?s=200&v=4",
+    "category": "developer-tools",
+    "tags": [
+      "api-management",
+      "testing",
+      "code-generation",
+      "collaboration",
+      "documentation"
+    ],
+    "requiresApiKey": false,
+    "readmeContent": "# Postman MCP Server\n\nThe **Postman MCP Server** implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io) to connect AI agents and coding assistants — including Claude Code, Cursor, VS Code Copilot, GitHub Copilot CLI, and Gemini CLI — directly to your Postman workspaces, collections, specifications, and environments.\n\nPostman also offers the server as an [npm package](https://www.npmjs.com/package/@postman/postman-mcp-server).\n\nFor the full installation guide with agent-specific setup, see Postman's [MCP Server product page](https://www.postman.com/product/mcp-server/).\n\n---\n\n## Postman MCP Server collection\n\nThe [Postman MCP Server collection](https://www.postman.com/postman/postman-public-workspace/collection/681dc649440b35935978b8b7) is the quickest way to explore",
+    "isRecommended": false,
+    "githubStars": 323,
+    "downloadCount": 17469,
+    "createdAt": "2026-03-27T22:30:02.730347Z",
+    "updatedAt": "2026-10-17T22:45:06.731532Z",
+    "lastGithubSync": "2026-10-17T22:45:06.729575Z"
+  },
+  {
+    "mcpId": "github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+    "githubUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+    "name": "PostgreSQL Reader",
+    "author": "modelcontextprotocol",
+    "description": "Provides read-only access to PostgreSQL databases, allowing LLMs to inspect database schemas and execute read-only queries within protected transactions.",
+    "codiconIcon": "database",
+    "logoUrl": "https://storage.googleapis.com/cline_public_images/postgresql-reader.png",
+    "category": "databases",
+    "tags": [
+      "postgresql",
+      "database-queries",
+      "schema-inspection",
+      "read-only",
+      "sql"
+    ],
+    "requiresApiKey": false,
+    "isRecommended": true,
+    "githubStars": 91097,
+    "downloadCount": 16159,
+    "createdAt": "2025-02-17T22:23:06.685298Z",
+    "updatedAt": "2026-10-10T01:54:27.693012Z",
+    "lastGithubSync": "2026-10-10T01:54:27.692167Z",
+    "readmeContent": ""
+  },
+  {
+    "mcpId": "github.com/brave/brave-search-mcp-server",
+    "githubUrl": "https://github.com/brave/brave-search-mcp-server",
+    "name": "Brave Search",
+    "author": "modelcontextprotocol",
+    "description": "Integrates Brave Search API to provide comprehensive web and local search capabilities with smart filtering, pagination, and automatic fallbacks.",
+    "codiconIcon": "search",
+    "logoUrl": "https://storage.googleapis.com/cline_public_images/brave-search.png",
+    "category": "search",
+    "tags": [
+      "search-engine",
+      "local-search",
+      "web-search",
+      "brave-api",
+      "content-discovery"
+    ],
+    "requiresApiKey": false,
+    "readmeContent": "# Brave Search MCP Server\n\nAn MCP server implementation that integrates the Brave Search API, providing comprehensive search capabilities including web search, local business search, place search, image search, video search, news search, LLM context, and AI-powered summarization. This project supports both STDIO and HTTP transports, with STDIO as the default mode.\n\n[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/brave/brave-search-mcp-server)\n\n## Migration\n\n### 1.x to 2.x\n\n#### Default transport now STDIO\n\nTo follow established MCP conventions, the server now defaults to STDIO. If you would like to continue using HTTP, you will need to set the `BRAVE_MCP_TRANSPORT` environment variable to `http`, or provide the runtime argument `--transport http` when launching the s",
+    "isRecommended": true,
+    "githubStars": 1504,
+    "downloadCount": 33924,
+    "createdAt": "2025-02-17T22:22:18.563691Z",
+    "updatedAt": "2026-10-16T17:36:21.109688Z",
+    "lastGithubSync": "2026-10-16T17:36:21.106752Z"
+  }
+]

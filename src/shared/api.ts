@@ -125,6 +125,8 @@ export interface ExtensionsApi {
   marketplaces(): Promise<Marketplace[]>
   addMarketplace(source: string): Promise<OpResult>
   removeMarketplace(name: string): Promise<OpResult>
+  /** Drop cached catalogs so the next search re-fetches every source. */
+  refresh(): Promise<OpResult>
   claudeMdTemplates(): Promise<ClaudeMdTemplate[]>
   /** Write CLAUDE.md for the user (~/.claude/CLAUDE.md) or a project. Appends unless replace. */
   writeClaudeMd(templateId: string, where: { scope: 'user' } | { scope: 'project'; projectPath: string }, replace?: boolean): Promise<OpResult>
@@ -178,6 +180,8 @@ export interface CoreEvents {
   progress: { op: string; message: string; pct?: number }
   proxy: ProxyLogEntry
   state: { key: string }
+  /** GUI only: window maximized/restored (sent by the Electron main process). */
+  window: { maximized: boolean }
 }
 
 export type CoreEventName = keyof CoreEvents
@@ -191,7 +195,9 @@ export interface UiApi {
   pickFolder(opts?: { title?: string; defaultPath?: string }): Promise<string | null>
   pickFile(opts?: { title?: string; filters?: Array<{ name: string; extensions: string[] }> }): Promise<string | null>
   copyText(text: string): Promise<void>
+  readClipboard(): Promise<string>
   window(action: 'minimize' | 'maximize' | 'close'): Promise<void>
+  windowState(): Promise<{ maximized: boolean }>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -231,6 +237,7 @@ export const CORE_METHODS: { [N in Namespace]: ReadonlyArray<MethodOf<N>> } = {
     'marketplaces',
     'addMarketplace',
     'removeMarketplace',
+    'refresh',
     'claudeMdTemplates',
     'writeClaudeMd'
   ],
@@ -247,7 +254,9 @@ export const UI_METHODS: ReadonlyArray<keyof UiApi> = [
   'pickFolder',
   'pickFile',
   'copyText',
-  'window'
+  'readClipboard',
+  'window',
+  'windowState'
 ]
 
 /** Shape exposed on window.api by the preload script. */

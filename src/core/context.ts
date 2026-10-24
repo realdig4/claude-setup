@@ -19,6 +19,8 @@ export interface CoreOptions {
   packaged?: boolean
   /** How this installation launches its own MCP server (set by the entry point). */
   selfMcpConfig?: StdioServerConfig
+  /** Why selfMcpConfig is unavailable (portable build, translocated app, …). */
+  selfMcpUnavailableReason?: string
   /** Inject a different secret store (tests). */
   secretStore?: SecretStore
 }
@@ -53,7 +55,7 @@ export async function createContext(options: CoreOptions): Promise<CoreContext> 
   }
   const state = new StateStore(join(dataDir, 'state.json'))
   await state.load()
-  const secrets = options.secretStore ?? createSecretStore(dataDir)
+  const secrets = options.secretStore ?? createSecretStore(dataDir, { onWarning: (m) => log.warn('secrets', m) })
   const backups = new BackupManager(join(dataDir, 'backups'), () => state.get().settings.keepBackups)
   return { options, dataDir, cacheDir: join(dataDir, 'cache'), state, secrets, backups, events, log }
 }

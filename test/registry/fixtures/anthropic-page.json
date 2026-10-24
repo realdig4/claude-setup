@@ -1,0 +1,516 @@
+{
+  "servers": [
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+        "name": "com.amplitude/mcp-server",
+        "description": "Connect your AI workflows to Amplitude's powerful behavior analytics and experimentation platform. The Amplitude MCP server enables seamless integration between AI assistants and your product data, allowing you to search, analyze, and query charts, dashboards, experiments, feature flags, and metrics directly from your AI interface.",
+        "title": "Amplitude",
+        "repository": {},
+        "version": "1.0.0",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "{url}"
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "publishedAt": "2025-10-16T20:22:46.742037Z",
+          "updatedAt": "2025-10-16T20:22:46.742037Z",
+          "isLatest": true
+        },
+        "com.anthropic.api/mcp-registry": {
+          "uuid": "8e40fa13-4654-4387-bbad-12b8ecc81351",
+          "type": "remote",
+          "promptNames": [],
+          "urlOptions": [
+            {
+              "url": "https://mcp.amplitude.com/mcp",
+              "label": "United States",
+              "description": "Default server for most accounts"
+            },
+            {
+              "url": "https://mcp.eu.amplitude.com/mcp",
+              "label": "EU",
+              "description": "EU data residency server"
+            }
+          ],
+          "isAuthless": false,
+          "displayName": "Amplitude",
+          "oneLiner": "Search, access, and get insights on your Amplitude data",
+          "iconUrl": "https://amplitude.com/",
+          "documentation": "https://amplitude.com/docs/analytics/amplitude-mcp",
+          "support": "http://support.amplitude.com",
+          "privacyPolicy": "https://amplitude.com/privacy",
+          "url": "https://mcp.amplitude.com/mcp",
+          "author": {
+            "name": "Amplitude",
+            "url": "https://amplitude.com/"
+          },
+          "slug": "amplitude",
+          "directoryUrl": "https://claude.ai/directory/8e40fa13-4654-4387-bbad-12b8ecc81351",
+          "claudeCodeCopyText": "claude mcp add --transport http amplitude https://mcp.amplitude.com/mcp",
+          "permissions": "Read",
+          "useCases": [
+            "sales-and-marketing"
+          ],
+          "worksWith": [
+            "claude",
+            "claude-code"
+          ],
+          "publishedOn": "Mon Jan 12 2026 16:21:41 GMT+0000 (Coordinated Universal Time)",
+          "createdOn": "Wed Oct 22 2025 16:58:42 GMT+0000 (Coordinated Universal Time)",
+          "updatedOn": "Mon Jan 12 2026 16:20:16 GMT+0000 (Coordinated Universal Time)",
+          "logo": "amplitude",
+          "serverLabel": "mcp.amplitude.com/mcp",
+          "itemId": "68f90d42bf55e5e237595f6c",
+          "collectionId": "68b05e2de975b4de7dd02d9d",
+          "localeId": "68a44d4040f98a4adf2207b5",
+          "imageUrls": [
+            {
+              "prompt": "Show me my last week's DAUs, split by device type",
+              "imageUrl": "https://storage.googleapis.com/media-assets-299d7136-cb52-d546-ee02-34bc1307c35f/Connectors%20Directory/Carousel%20Prompt%20Images/App%20Amplitude%20Card%201.png"
+            },
+            {
+              "prompt": "What does my conversion funnel look like?",
+              "imageUrl": "https://storage.googleapis.com/media-assets-299d7136-cb52-d546-ee02-34bc1307c35f/Connectors%20Directory/Carousel%20Prompt%20Images/App%20Amplitude%20Card%202.png"
+            },
+            {
+              "prompt": "Show me my 7 day user retention since launch",
+              "imageUrl": "https://storage.googleapis.com/media-assets-299d7136-cb52-d546-ee02-34bc1307c35f/Connectors%20Directory/Carousel%20Prompt%20Images/App%20Amplitude%20Card%203.png"
+            }
+          ],
+          "hasMcpApp": true,
+          "source": "auto-sync",
+          "visibility": [
+            "commercial"
+          ],
+          "added_at": "2025-11-12",
+          "sortOrder": 1
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "io.port/Port",
+        "description": "Connect Port's context lake and software catalog directly to Claude. Query services, dependencies, and ownership using natural language. Analyze scorecards and service health. Execute governed self-service actions and workflows with built-in guardrails.",
+        "repository": {
+          "url": "https://github.com/port-labs/remote-mcp-server",
+          "source": "github"
+        },
+        "version": "1.0.2",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "{url}"
+          }
+        ],
+        "title": "Port IO"
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "publishedAt": "2026-01-12T08:41:09.446627Z",
+          "updatedAt": "2026-01-12T08:41:09.446627Z",
+          "isLatest": true
+        },
+        "com.anthropic.api/mcp-registry": {
+          "uuid": "8f5edd1c-c876-465e-a5b9-cc8e6d27dcb7",
+          "type": "remote",
+          "promptNames": [],
+          "urlRegex": "^https://mcp(\\.eu|\\.us)?\\.port\\.io/v1",
+          "requiredFields": [
+            {
+              "field": "url",
+              "sourceUrl": "https://docs.port.io/ai-interfaces/port-mcp-server/overview-and-installation/?mcp-setup=claude&region=eu#installing-port-mcp"
+            }
+          ],
+          "isAuthless": false,
+          "displayName": "Port IO",
+          "oneLiner": "Search your context lake and safely run actions",
+          "iconUrl": "https://www.port.io",
+          "documentation": "https://docs.port.io/ai-interfaces/port-mcp-server/overview-and-installation",
+          "support": "https://support@port.io",
+          "privacyPolicy": "https://www.port.io/legal/privacy-policy",
+          "url": "{url}",
+          "author": {
+            "name": "Port IO",
+            "url": "https://www.port.io"
+          },
+          "worksWith": [
+            "claude",
+            "claude-api",
+            "claude-code"
+          ],
+          "source": "auto-sync",
+          "visibility": [
+            "commercial"
+          ],
+          "added_at": "2026-01-19",
+          "useCases": [
+            "code"
+          ]
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+        "name": "com.notion/mcp",
+        "description": "Notion MCP helps you plug tools into your Notion workspace, allowing you to create, edit, search and organize content directly from Claude. Get contextual and relevant assistance from Claude, while keeping knowledge organized in Notion.",
+        "repository": {},
+        "version": "1.0.1",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://mcp.notion.com/mcp"
+          }
+        ],
+        "title": "Notion"
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "publishedAt": "2025-09-11T22:25:50.737872Z",
+          "updatedAt": "2025-09-11T22:25:50.737872Z",
+          "isLatest": true
+        },
+        "com.anthropic.api/mcp-registry": {
+          "uuid": "69f3a300-cc60-48c4-b237-dfac56530dbf",
+          "type": "remote",
+          "promptNames": [],
+          "isAuthless": false,
+          "displayName": "Notion",
+          "oneLiner": "Connect your Notion workspace to search, update, and power workflows across tools",
+          "iconUrl": "https://www.notion.so/images/notion-logo-block-main.svg",
+          "documentation": "https://developers.notion.com/docs/mcp",
+          "support": "mailto:developers@makenotion.com",
+          "privacyPolicy": "https://www.notion.so/notion/Privacy-Policy-3468d120cf614d4c9014c09f6adc9091",
+          "url": "https://mcp.notion.com/mcp",
+          "author": {
+            "name": "Notion",
+            "url": "https://notion.com"
+          },
+          "slug": "notion",
+          "directoryUrl": "http://claude.ai/directory/69f3a300-cc60-48c4-b237-dfac56530dbf",
+          "claudeCodeCopyText": "claude mcp add --transport http notion https://mcp.notion.com/mcp",
+          "permissions": "Read and write",
+          "useCases": [
+            "productivity"
+          ],
+          "worksWith": [
+            "claude",
+            "claude-api",
+            "claude-code"
+          ],
+          "publishedOn": "Fri Jan 16 2026 19:33:48 GMT+0000 (Coordinated Universal Time)",
+          "createdOn": "Thu Aug 28 2025 14:02:56 GMT+0000 (Coordinated Universal Time)",
+          "updatedOn": "Fri Jan 16 2026 19:32:31 GMT+0000 (Coordinated Universal Time)",
+          "logo": "notion",
+          "backgroundPattern": "Line 1",
+          "heroVideoId": "xBV60h9_lbw",
+          "heroVideoPreviewLink": "https://cdn.sanity.io/files/4zrzovbb/website/5a520c2349640aa2e64105cfa1398a0da575ddd6.mp4",
+          "serverLabel": "mcp.notion.com",
+          "itemId": "68b0619053b61cf2e850aa90",
+          "collectionId": "68b05e2de975b4de7dd02d9d",
+          "localeId": "68a44d4040f98a4adf2207b5",
+          "source": "auto-sync",
+          "visibility": [
+            "commercial"
+          ],
+          "added_at": "2025-11-12",
+          "sortOrder": 0
+        }
+      }
+    },
+    {
+      "server": {
+        "name": "com.microsoft/microsoft-learn-mcp",
+        "version": "1.0.0",
+        "description": "The Microsoft Learn MCP Server enables clients like GitHub Copilot and other AI agents to bring trusted and up-to-date information directly from Microsoft's official documentation. It is a remote MCP server that uses streamable http. It allows to search through documentation, fetch a complete article, and search through code samples.",
+        "title": "Microsoft Learn",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://learn.microsoft.com/api/mcp"
+          }
+        ]
+      },
+      "_meta": {
+        "com.anthropic.api/mcp-registry": {
+          "uuid": "89a7ddf5-2a6b-410c-be11-aa0e1a1b35a6",
+          "type": "remote",
+          "promptNames": [],
+          "isAuthless": true,
+          "displayName": "Microsoft Learn",
+          "oneLiner": "Search trusted Microsoft docs to power your development",
+          "iconUrl": "https://learn.microsoft.com/en-us/",
+          "documentation": "https://learn.microsoft.com/en-us/training/support/mcp",
+          "support": "https://github.com/MicrosoftDocs/mcp/issues",
+          "privacyPolicy": "https://www.microsoft.com/en-us/privacy/privacystatement",
+          "url": "https://learn.microsoft.com/api/mcp",
+          "author": {
+            "name": "Microsoft",
+            "url": "https://learn.microsoft.com/en-us/"
+          },
+          "slug": "microsoft-learn",
+          "directoryUrl": "https://claude.ai/directory/89a7ddf5-2a6b-410c-be11-aa0e1a1b35a6",
+          "claudeCodeCopyText": "claude mcp add --transport http microsoft-learn https://learn.microsoft.com/api/mcp\n",
+          "worksWith": [
+            "claude",
+            "claude-api",
+            "claude-code"
+          ],
+          "logo": "microsoft-learn",
+          "backgroundPattern": "Line 1",
+          "serverLabel": "learn.microsoft.com/api/mcp",
+          "source": "manual",
+          "visibility": [
+            "commercial"
+          ],
+          "useCases": [
+            "code"
+          ],
+          "permissions": "Read",
+          "added_at": "2026-02-15",
+          "sortOrder": 1
+        },
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "com.supabase/mcp",
+        "description": "Manage Supabase projects directly through Claude. Execute SQL queries on PostgreSQL databases, design and modify table schemas, deploy serverless edge functions, and configure user authentication. Access real-time logs for debugging, generate TypeScript types for your schema, create and apply database migrations, and manage development branches through natural language commands.",
+        "title": "Supabase",
+        "repository": {
+          "url": "https://github.com/supabase-community/supabase-mcp",
+          "source": "github",
+          "subfolder": "packages/mcp-server-supabase"
+        },
+        "version": "0.6.2",
+        "websiteUrl": "https://supabase.com/mcp",
+        "icons": [
+          {
+            "src": "https://supabase.com/favicon/favicon-16x16.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "16x16"
+            ]
+          },
+          {
+            "src": "https://supabase.com/favicon/favicon-32x32.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "32x32"
+            ]
+          },
+          {
+            "src": "https://supabase.com/favicon/favicon-48x48.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "48x48"
+            ]
+          },
+          {
+            "src": "https://supabase.com/favicon/favicon-96x96.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "96x96"
+            ]
+          },
+          {
+            "src": "https://supabase.com/favicon/favicon-128.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "128x128"
+            ]
+          },
+          {
+            "src": "https://supabase.com/favicon/favicon-180x180.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "180x180"
+            ]
+          },
+          {
+            "src": "https://supabase.com/favicon/favicon-196x196.png",
+            "mimeType": "image/png",
+            "sizes": [
+              "196x196"
+            ]
+          }
+        ],
+        "packages": [
+          {
+            "registryType": "npm",
+            "registryBaseUrl": "https://registry.npmjs.org",
+            "identifier": "@supabase/mcp-server-supabase",
+            "version": "0.6.2",
+            "runtimeHint": "npx",
+            "transport": {
+              "type": "stdio"
+            },
+            "runtimeArguments": [
+              {
+                "description": "Supabase project reference ID",
+                "format": "string",
+                "type": "named",
+                "name": "--project-ref"
+              },
+              {
+                "description": "Enable read-only mode",
+                "format": "boolean",
+                "type": "named",
+                "name": "--read-only"
+              },
+              {
+                "description": "Comma-separated list of features to enable",
+                "format": "string",
+                "type": "named",
+                "name": "--features"
+              },
+              {
+                "description": "Custom API URL",
+                "format": "string",
+                "type": "named",
+                "name": "--api-url"
+              }
+            ],
+            "environmentVariables": [
+              {
+                "description": "Personal access token for Supabase API",
+                "isRequired": true,
+                "format": "string",
+                "isSecret": true,
+                "name": "SUPABASE_ACCESS_TOKEN"
+              }
+            ]
+          }
+        ],
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://mcp.supabase.com/mcp"
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "publishedAt": "2026-01-27T02:51:36.935148Z",
+          "updatedAt": "2026-01-27T02:51:36.935148Z",
+          "isLatest": true
+        },
+        "com.anthropic.api/mcp-registry": {
+          "uuid": "11ca66fc-1e98-49d5-ab9b-7cb4672a8f10",
+          "type": "remote",
+          "promptNames": [],
+          "isAuthless": false,
+          "displayName": "Supabase",
+          "oneLiner": "Manage databases, authentication, and storage",
+          "iconUrl": "https://supabase.com",
+          "documentation": "https://supabase.com/docs/guides/getting-started/mcp",
+          "support": "https://github.com/supabase-community/supabase-mcp/issues",
+          "privacyPolicy": "https://supabase.com/privacy",
+          "url": "https://mcp.supabase.com/mcp",
+          "author": {
+            "name": "Supabase",
+            "url": "https://supabase.com/"
+          },
+          "slug": "supabase",
+          "directoryUrl": "https://claude.ai/directory/11ca66fc-1e98-49d5-ab9b-7cb4672a8f10",
+          "claudeCodeCopyText": "claude mcp add --transport http supabase https://mcp.supabase.com/mcp\n",
+          "worksWith": [
+            "claude",
+            "claude-api",
+            "claude-code"
+          ],
+          "logo": "supabase",
+          "backgroundPattern": "Line 1",
+          "serverLabel": "mcp.supabase.com/mcp",
+          "source": "manual",
+          "visibility": [
+            "commercial"
+          ],
+          "added_at": "2026-01-29",
+          "useCases": [
+            "code",
+            "data"
+          ],
+          "sortOrder": 1
+        }
+      }
+    },
+    {
+      "server": {
+        "name": "com.context7/context7",
+        "version": "1.0.0",
+        "description": "Context7 fetches up-to-date code examples and documentation right into your LLM's context. No tab-switching, no hallucinated APIs that don't exist, no outdated code generation.",
+        "title": "Context7",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://mcp.context7.com/mcp"
+          }
+        ]
+      },
+      "_meta": {
+        "com.anthropic.api/mcp-registry": {
+          "uuid": "37153cd7-b17c-470e-8b46-007e2859e0f3",
+          "type": "remote",
+          "promptNames": [],
+          "isAuthless": false,
+          "displayName": "Context7",
+          "oneLiner": "Up-to-date docs for LLMs and AI code editors",
+          "iconUrl": "https://context7.com/context7-icon-green.png",
+          "documentation": "https://context7.com/docs/overview",
+          "support": "https://github.com/upstash/context7/issues",
+          "privacyPolicy": "https://upstash.com/trust/privacy.pdf",
+          "url": "https://mcp.context7.com/mcp",
+          "author": {
+            "name": "Context7",
+            "url": "https://context7.com"
+          },
+          "slug": "context7",
+          "directoryUrl": "https://claude.ai/directory/37153cd7-b17c-470e-8b46-007e2859e0f3",
+          "claudeCodeCopyText": "claude mcp add --transport http context7 https://mcp.context7.com/mcp\n",
+          "worksWith": [
+            "claude",
+            "claude-api",
+            "claude-code",
+            "claude-desktop"
+          ],
+          "logo": "context7",
+          "backgroundPattern": "Line 1",
+          "serverLabel": "mcp.context7.com/mcp",
+          "source": "manual",
+          "visibility": [
+            "commercial"
+          ],
+          "useCases": [
+            "code"
+          ],
+          "permissions": "Read Only",
+          "added_at": "2026-02-06",
+          "sortOrder": 1
+        },
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "isLatest": true
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "count": 6
+  }
+}

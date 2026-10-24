@@ -1,0 +1,10 @@
+/*
+ * Stylesheet entry for the renderer. Tailwind v4 (CSS-first config: no tailwind.config.js).
+ * Class scanning is limited to src/renderer (pages, components, lib) plus index.html.
+ */
+@import 'tailwindcss' source('..');
+@source '../../index.html';
+
+@import './theme.css';
+@import './base.css';
+@import './vendor.css';

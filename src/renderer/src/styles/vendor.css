@@ -1,0 +1,97 @@
+/*
+ * Theming for third-party widgets that inject their own CSS at runtime (sonner).
+ * These rules are intentionally unlayered and use an extra `html` in the selector so they win over the
+ * library's own (unlayered) stylesheet without !important.
+ */
+
+html [data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--color-elevated);
+  --normal-bg-hover: var(--color-surface-2);
+  --normal-border: var(--color-line);
+  --normal-border-hover: var(--color-line-strong);
+  --normal-text: var(--color-fg);
+  --border-radius: 14px;
+  --width: 368px;
+  --toast-close-button-start: unset;
+  --toast-close-button-end: 0;
+  --toast-close-button-transform: translate(35%, -35%);
+  font-family: var(--font-sans);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] {
+  padding: 13px 14px 13px 16px;
+  gap: 10px;
+  align-items: flex-start;
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-title] {
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-description] {
+  color: var(--color-fg-muted);
+  line-height: 1.45;
+  margin-top: 1px;
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-icon] {
+  margin-top: 1px;
+  width: 18px;
+  height: 18px;
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-type='success'] [data-icon] {
+  color: var(--color-success);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-type='error'] [data-icon] {
+  color: var(--color-danger);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-type='warning'] [data-icon] {
+  color: var(--color-warn);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-type='info'] [data-icon] {
+  color: var(--color-info);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-type='loading'] [data-icon] {
+  color: var(--color-accent);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-button] {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: var(--color-accent-solid);
+  color: var(--color-accent-fg);
+  align-self: center;
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-cancel] {
+  background: var(--color-surface-3);
+  color: var(--color-fg);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-close-button] {
+  background: var(--color-elevated);
+  border-color: var(--color-line);
+  color: var(--color-fg-muted);
+}
+
+html [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-close-button]:hover {
+  background: var(--color-surface-2);
+  border-color: var(--color-line-strong);
+  color: var(--color-fg);
+}
+
+html [data-sonner-toaster] [data-sonner-toast]:focus-visible {
+  box-shadow: var(--shadow-lg), 0 0 0 2px var(--color-ring);
+}

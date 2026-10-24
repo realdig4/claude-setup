@@ -1,0 +1,88 @@
+# electron-builder 26.18 configuration for Claude Setup (research_stack.md §3).
+# Build: npm run dist (or dist:win / dist:mac / dist:linux) after `electron-vite build`.
+appId: dev.claudesetup.app
+productName: Claude Setup
+executableName: claude-setup
+copyright: Copyright © 2026 Claude Setup contributors
+directories:
+  buildResources: build
+  output: dist
+files:
+  - out/**
+  - package.json
+  - resources/**
+  - '!**/*.map'
+asar: true
+# Tray icons and the bundled catalog seed are read at runtime; keep real files next to the archive.
+asarUnpack:
+  - resources/**
+compression: normal
+npmRebuild: false
+publish: null
+
+# The MCP server (out/main/mcp.js) and the CLI (out/main/cli.js) run this same executable with
+# ELECTRON_RUN_AS_NODE=1, so the RunAsNode fuse MUST stay enabled.
+electronFuses:
+  runAsNode: true
+  enableCookieEncryption: true
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  enableEmbeddedAsarIntegrityValidation: true
+  onlyLoadAppFromAsar: true
+  grantFileProtocolExtraPrivileges: true
+
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+    # The portable exe unpacks to a new temp folder on every start, so it cannot register itself
+    # as an MCP server or install the CLI shim (the app explains this to the user).
+    - target: portable
+      arch: [x64]
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Claude Setup
+  deleteAppDataOnUninstall: false
+  artifactName: ${name}-${version}-setup-${arch}.${ext}
+portable:
+  artifactName: ${name}-${version}-portable-${arch}.${ext}
+  requestExecutionLevel: user
+
+mac:
+  icon: build/icon.png
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+  hardenedRuntime: true
+  # Notarization needs Apple credentials in the environment (APPLE_API_KEY + APPLE_API_KEY_ID +
+  # APPLE_API_ISSUER, or APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID). Set this to true
+  # (or pass -c.mac.notarize=true) in a release build that has them.
+  notarize: false
+dmg:
+  artifactName: ${name}-${version}-${arch}.${ext}
+
+linux:
+  icon: build/icon.png
+  category: Development
+  synopsis: Set up MCP servers, models and extensions for Claude
+  maintainer: Claude Setup <noreply@claudesetup.dev>
+  target:
+    - target: AppImage
+      arch: [x64, arm64]
+    - target: deb
+      arch: [x64]
+appImage:
+  artifactName: ${name}-${version}-${arch}.${ext}
+deb:
+  artifactName: ${name}_${version}_${arch}.${ext}
+# Static AppImage runtime: works without libfuse2 on current distributions.
+toolsets:
+  appimage: "1.0.3"

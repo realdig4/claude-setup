@@ -1,0 +1,309 @@
+{
+  "servers": [
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "ai.anomalyarmor/armor-mcp",
+        "description": "Data observability tools for engineering teams: alerts, freshness, schema drift, lineage, quality.",
+        "title": "AnomalyArmor",
+        "repository": {
+          "url": "https://github.com/anomalyarmor/agents",
+          "source": "github",
+          "subfolder": "armor-mcp"
+        },
+        "version": "0.6.1",
+        "websiteUrl": "https://www.anomalyarmor.ai",
+        "packages": [
+          {
+            "registryType": "pypi",
+            "identifier": "armor-mcp",
+            "version": "0.6.1",
+            "transport": {
+              "type": "stdio"
+            },
+            "environmentVariables": [
+              {
+                "description": "AnomalyArmor API key (aa_live_*). Generate at https://app.anomalyarmor.ai/settings/api-keys.",
+                "isRequired": true,
+                "isSecret": true,
+                "name": "ARMOR_API_KEY"
+              }
+            ]
+          }
+        ],
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://mcp.anomalyarmor.ai/mcp"
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "statusChangedAt": "2026-04-18T00:51:37.350253Z",
+          "publishedAt": "2026-04-18T00:51:37.350253Z",
+          "updatedAt": "2026-04-18T00:51:37.350253Z",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "cloud.anythink/anythink",
+        "description": "Sick of stitched-together services? Anythink is the all-in-one backend, configured with AI.",
+        "title": "Anythink all-in-one backend: data, auth, files, workflows, payments, APIs",
+        "repository": {
+          "url": "https://github.com/anythink-cloud/anythink-cli",
+          "source": "github"
+        },
+        "version": "0.2.37",
+        "websiteUrl": "https://anythink.cloud",
+        "packages": [
+          {
+            "registryType": "nuget",
+            "identifier": "anythink-mcp",
+            "version": "0.2.37",
+            "transport": {
+              "type": "stdio"
+            }
+          }
+        ],
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://mcp.anythink.cloud/mcp"
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "statusChangedAt": "2026-10-11T23:33:32.23028Z",
+          "publishedAt": "2026-10-11T23:33:32.23028Z",
+          "updatedAt": "2026-10-11T23:33:32.23028Z",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "ai.autorfp/mcp",
+        "description": "Search AutoRFP.ai projects, requirements, content library, and tags for Q&A and analytics.",
+        "title": "AutoRFP.ai",
+        "repository": {
+          "url": "https://github.com/AutoRFP/mcp",
+          "source": "github"
+        },
+        "version": "1.0.0",
+        "websiteUrl": "https://autorfp.ai",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://{api_host}/mcp",
+            "variables": {
+              "api_host": {
+                "description": "AutoRFP.ai API host for your data-residency region.",
+                "isRequired": true,
+                "choices": [
+                  "api.autorfp.ai",
+                  "api.eu.autorfp.ai",
+                  "api.us.autorfp.ai"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "statusChangedAt": "2026-05-18T01:09:10.259215Z",
+          "publishedAt": "2026-05-18T01:09:10.259215Z",
+          "updatedAt": "2026-05-18T01:09:10.259215Z",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "com.microsoft/azure",
+        "description": "All Azure MCP tools to create a seamless connection between AI agents and Azure services.",
+        "title": "Azure MCP Server",
+        "repository": {
+          "url": "https://github.com/microsoft/mcp",
+          "source": "github",
+          "subfolder": "servers/Azure.Mcp.Server"
+        },
+        "version": "3.0.0-beta.48",
+        "websiteUrl": "https://github.com/microsoft/mcp/tree/main/servers/Azure.Mcp.Server",
+        "packages": [
+          {
+            "registryType": "nuget",
+            "identifier": "Azure.Mcp",
+            "version": "3.0.0-beta.48",
+            "transport": {
+              "type": "stdio"
+            },
+            "packageArguments": [
+              {
+                "value": "server",
+                "type": "positional"
+              },
+              {
+                "value": "start",
+                "type": "positional"
+              }
+            ]
+          },
+          {
+            "registryType": "npm",
+            "identifier": "@azure/mcp",
+            "version": "3.0.0-beta.48",
+            "transport": {
+              "type": "stdio"
+            },
+            "packageArguments": [
+              {
+                "value": "server",
+                "type": "positional"
+              },
+              {
+                "value": "start",
+                "type": "positional"
+              }
+            ]
+          },
+          {
+            "registryType": "pypi",
+            "identifier": "msmcp-azure",
+            "version": "3.0.0b48",
+            "transport": {
+              "type": "stdio"
+            },
+            "packageArguments": [
+              {
+                "value": "server",
+                "type": "positional"
+              },
+              {
+                "value": "start",
+                "type": "positional"
+              }
+            ]
+          },
+          {
+            "registryType": "mcpb",
+            "identifier": "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-3.0.0-beta.48/Azure.Mcp.Server-win-x64.mcpb",
+            "fileSha256": "980b09575ce16a92e9cf96233d933446622f3e19f0d298beec9564121f438e5f",
+            "transport": {
+              "type": "stdio"
+            }
+          },
+          {
+            "registryType": "mcpb",
+            "identifier": "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-3.0.0-beta.48/Azure.Mcp.Server-win-arm64.mcpb",
+            "fileSha256": "f52c99befe49bdd80eee49da2e7c9b420fd3423b5739750cf664ed46b7ddc232",
+            "transport": {
+              "type": "stdio"
+            }
+          },
+          {
+            "registryType": "mcpb",
+            "identifier": "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-3.0.0-beta.48/Azure.Mcp.Server-linux-x64.mcpb",
+            "fileSha256": "21df704aabab188fb2e0c7c186359845b7a33a2875d837da32769ca9d4bdaf01",
+            "transport": {
+              "type": "stdio"
+            }
+          },
+          {
+            "registryType": "mcpb",
+            "identifier": "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-3.0.0-beta.48/Azure.Mcp.Server-linux-arm64.mcpb",
+            "fileSha256": "8de45f3870442961456752413ba697c65a070d684fbf99535fa4ea0e99bf48dd",
+            "transport": {
+              "type": "stdio"
+            }
+          },
+          {
+            "registryType": "mcpb",
+            "identifier": "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-3.0.0-beta.48/Azure.Mcp.Server-osx-x64.mcpb",
+            "fileSha256": "dc7e4b178e19fe7b24cad89b636623b9c61f4cf2aeee57747d7280c0c0abf4c2",
+            "transport": {
+              "type": "stdio"
+            }
+          },
+          {
+            "registryType": "mcpb",
+            "identifier": "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-3.0.0-beta.48/Azure.Mcp.Server-osx-arm64.mcpb",
+            "fileSha256": "f4737f574b57b374b9e59e2dd87e0b1f0859f92524d56af5cc9ce4a36b56a192",
+            "transport": {
+              "type": "stdio"
+            }
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "statusChangedAt": "2026-09-30T02:07:19.637605Z",
+          "publishedAt": "2026-09-30T02:07:19.637605Z",
+          "updatedAt": "2026-09-30T02:07:19.637605Z",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+        "name": "ai.agentplaybooks/agentplaybooks",
+        "description": "Manage portable AI agent playbooks, Agent Skills, MCP configurations, personas, and memory.",
+        "title": "AgentPlaybooks",
+        "repository": {
+          "url": "https://github.com/matebenyovszky/agentplaybooks",
+          "source": "github"
+        },
+        "version": "1.0.0",
+        "websiteUrl": "https://agentplaybooks.ai",
+        "icons": [
+          {
+            "src": "https://agentplaybooks.ai/icon.svg",
+            "mimeType": "image/svg+xml",
+            "sizes": [
+              "any"
+            ]
+          }
+        ],
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://agentplaybooks.ai/api/mcp/manage",
+            "headers": [
+              {
+                "description": "Bearer AgentPlaybooks user API key (for example: Bearer apb_live_...)",
+                "isRequired": true,
+                "isSecret": true,
+                "name": "Authorization"
+              }
+            ]
+          }
+        ]
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "deprecated",
+          "statusChangedAt": "2026-08-01T20:44:36.793656Z",
+          "statusMessage": "Published accidentally as 1.0.0; use 0.2.0 as the early release.",
+          "publishedAt": "2026-08-01T20:24:13.359787Z",
+          "updatedAt": "2026-08-01T20:44:36.793656Z",
+          "isLatest": true
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "count": 5
+  }
+}

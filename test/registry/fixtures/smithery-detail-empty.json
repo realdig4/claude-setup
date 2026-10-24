@@ -1,0 +1,13 @@
+{
+  "qualifiedName": "dddlli/pdf-reader-mcp",
+  "displayName": "pdf-reader-mcp",
+  "description": "",
+  "iconUrl": "https://www.google.com/s2/favicons?domain=github.com&sz=64",
+  "remote": false,
+  "deploymentUrl": null,
+  "connections": [],
+  "security": null,
+  "tools": null,
+  "resources": null,
+  "prompts": null
+}

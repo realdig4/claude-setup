@@ -1,0 +1,504 @@
+version: 3
+name: docker-mcp
+displayName: Docker MCP Catalog
+registry:
+  brave:
+    description: Search the Web for pages, images, news, videos, and more using the
+      Brave Search API.
+    title: Brave Search
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/brave-search@sha256:f58a5c22c1196ec7bd1ca586ce216f2334fc298550ddcf652c0e8adb6d256d78
+    ref: ""
+    source: https://github.com/brave/brave-search-mcp-server/tree/fd28e3e7b3e1911b4a2ba87a199feb86ec173c60
+    upstream: https://github.com/brave/brave-search-mcp-server
+    icon: https://avatars.githubusercontent.com/u/12301619?s=200&v=4
+    secrets:
+      - name: brave.api_key
+        env: BRAVE_API_KEY
+        example: YOUR_API_KEY_HERE
+        description: See [Getting an API
+          key](https://github.com/brave/brave-search-mcp-server?tab=readme-ov-file#getting-an-api-key)
+    env:
+      - name: BRAVE_MCP_TRANSPORT
+        value: stdio
+    metadata:
+      pulls: 288417
+      stars: 26
+      githubStars: 1521
+      category: search
+      tags:
+        - brave
+        - search
+      license: MIT License
+      owner: brave
+  context7:
+    description: Pull up-to-date, version-specific documentation and code examples
+      for any library or framework straight into your prompt.
+    title: Context7
+    type: remote
+    dateAdded: 2025-05-05T20:08:35Z
+    ref: ""
+    source: ""
+    remote:
+      transport_type: streamable-http
+      url: https://mcp.context7.com/mcp
+      headers:
+        CONTEXT7_API_KEY: ${CONTEXT7_API_KEY}
+    icon: https://avatars.githubusercontent.com/u/74989412?s=200&v=4
+    secrets:
+      - name: context7.api_key
+        env: CONTEXT7_API_KEY
+        example: <YOUR_API_KEY>
+    metadata:
+      category: documentation
+      tags:
+        - documentation
+        - developer-tools
+        - code-examples
+        - remote
+      license: Apache License 2.0
+      owner: docker
+  atlassian:
+    description: Tools for Atlassian products (Confluence and Jira). This
+      integration supports both Atlassian Cloud and Jira Server/Data Center
+      deployments.
+    title: Atlassian
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/atlassian@sha256:ecec36c622798897c4ede7a43b15069dac048d5be13af07aa3320450fe65f953
+    ref: ""
+    source: https://github.com/sooperset/mcp-atlassian/tree/35b1da00c920810e7d4119cdd9fcc5b46eec5b0e
+    upstream: https://github.com/sooperset/mcp-atlassian
+    icon: https://avatars.githubusercontent.com/u/43281909?s=200&v=4
+    secrets:
+      - name: atlassian.confluence.api_token
+        env: CONFLUENCE_API_TOKEN
+        example: your_api_token
+      - name: atlassian.confluence.personal_token
+        env: CONFLUENCE_PERSONAL_TOKEN
+        example: your_api_token
+      - name: atlassian.jira.api_token
+        env: JIRA_API_TOKEN
+        example: your_api_token
+      - name: atlassian.jira.personal_token
+        env: JIRA_PERSONAL_TOKEN
+        example: your_api_token
+    env:
+      - name: CONFLUENCE_URL
+        value: "{{atlassian.confluence.url}}"
+      - name: CONFLUENCE_USERNAME
+        value: "{{atlassian.confluence.username}}"
+      - name: JIRA_URL
+        value: "{{atlassian.jira.url}}"
+      - name: JIRA_USERNAME
+        value: "{{atlassian.jira.username}}"
+    config:
+      - name: atlassian
+        description: The MCP server is allowed to access these paths
+        type: object
+        properties:
+          confluence:
+            type: object
+            properties:
+              url:
+                type: string
+              username:
+                type: string
+            required:
+              - url
+          jira:
+            type: object
+            properties:
+              url:
+                type: string
+              username:
+                type: string
+            required:
+              - url
+        anyOf:
+          - required:
+              - confluence
+          - required:
+              - jira
+    metadata:
+      pulls: 169249
+      stars: 22
+      githubStars: 6029
+      category: productivity
+      tags:
+        - atlassian
+        - confluence
+        - jira
+      license: MIT License
+      owner: sooperset
+  notion:
+    description: Official Notion MCP Server.
+    title: Notion
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/notion@sha256:df0d6781d03f37bd5b962c85ae1f288382f31b7108c489473641ffc372f43dc9
+    ref: ""
+    source: https://github.com/makenotion/notion-mcp-server/tree/d7e3bbd62890f9efca2cd54449ac072f3bd1a4ba
+    upstream: https://github.com/makenotion/notion-mcp-server
+    icon: https://avatars.githubusercontent.com/u/4792552?s=200&v=4
+    secrets:
+      - name: notion.internal_integration_token
+        env: INTERNAL_INTEGRATION_TOKEN
+        example: ntn_****
+    env:
+      - name: OPENAPI_MCP_HEADERS
+        value: '{"Authorization": "Bearer $INTERNAL_INTEGRATION_TOKEN",
+          "Notion-Version": "2022-06-28"}'
+    metadata:
+      pulls: 271976
+      stars: 37
+      githubStars: 4676
+      category: productivity
+      tags:
+        - notion
+        - secrets
+      license: MIT License
+      owner: makenotion
+  filesystem:
+    description: Local filesystem access with configurable allowed paths.
+    title: Filesystem (Reference)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/filesystem@sha256:35fcf0217ca0d5bf7b0a5bd68fb3b89e08174676c0e0b4f431604512cf7b3f67
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/b4ee623039a6c60053ce67269701ad9e95073306
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    command:
+      - "{{filesystem.paths|volume-target|into}}"
+    volumes:
+      - "{{filesystem.paths|volume|into}}"
+    disableNetwork: true
+    config:
+      - name: filesystem
+        description: The MCP server is allowed to access these paths
+        type: object
+        properties:
+          paths:
+            type: array
+            items:
+              type: string
+        required:
+          - paths
+    metadata:
+      pulls: 299573
+      stars: 28
+      githubStars: 91497
+      category: devops
+      tags:
+        - filesystem
+        - devops
+      license: Other
+      owner: modelcontextprotocol
+  memory:
+    description: Knowledge graph-based persistent memory system.
+    title: Memory (Reference)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/memory@sha256:db0c2db07a44b6797eba7a832b1bda142ffc899588aae82c92780cbb2252407f
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/b4ee623039a6c60053ce67269701ad9e95073306/src/memory
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/knowledgebase.svg
+    volumes:
+      - claude-memory:/app/dist
+    metadata:
+      pulls: 561789
+      stars: 26
+      githubStars: 91497
+      category: ai
+      tags:
+        - mcp
+        - ai
+      license: Other
+      owner: modelcontextprotocol
+  sentry:
+    description: A Model Context Protocol server for retrieving and analyzing issues
+      from Sentry.io. This server provides tools to inspect error reports,
+      stacktraces, and other debugging information from your Sentry account.
+    title: Sentry (Archived)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/sentry@sha256:f38467297a1ed273009e0ad85bd0fc9f4ce44578114be0f349d6333c5000558b
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/b4ee623039a6c60053ce67269701ad9e95073306/src/sentry
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://avatars.githubusercontent.com/u/1396951?s=200&v=4
+    secrets:
+      - name: sentry.auth_token
+        env: SENTRY_AUTH_TOKEN
+        example: YOUR_SENTRY_TOKEN
+    command:
+      - --auth-token
+      - $SENTRY_AUTH_TOKEN
+    metadata:
+      pulls: 67163
+      stars: 7
+      githubStars: 91497
+      category: devops
+      tags:
+        - sentry
+        - devops
+      license: Other
+      owner: modelcontextprotocol
+  aks:
+    description: Azure Kubernetes Service (AKS) official MCP server.
+    title: Azure Kubernetes Service (AKS)
+    type: server
+    dateAdded: 2025-08-20T06:26:55Z
+    image: mcp/aks@sha256:6a0948a385b3a85d9d07db61edf59d1d398b4d6ada67e6bd649f6c383a493307
+    ref: ""
+    source: https://github.com/Azure/aks-mcp/tree/e60444c3d739dc3606d9ff4cd3826019e02df8d9
+    upstream: https://github.com/Azure/aks-mcp
+    icon: https://raw.githubusercontent.com/Azure/AKS/1c3979cf6729c78cfff2c0c78cb0aa657e1bbf7a/blog/assets/images/400x400.png
+    command:
+      - --transport=stdio
+      - --access-level={{aks.access_level}}
+      - --allow-namespaces={{aks.allow_namespaces}}
+      - --additional-tools={{aks.additional_tools}}
+    volumes:
+      - "{{aks.azure_dir}}:/home/mcp/.azure"
+      - "{{aks.kubeconfig}}:/home/mcp/.kube/config"
+    user: "{{aks.container_user}}"
+    config:
+      - name: aks
+        description: Configuration for AKS-MCP server
+        type: object
+        properties:
+          azure_dir:
+            type: string
+            description: Path to the Azure configuration directory (e.g.
+              /home/azureuser/.azure). Used for Azure CLI authentication, you
+              should be logged in (e.g. run `az login`) on the host before
+              starting the MCP server.
+          kubeconfig:
+            type: string
+            description: Path to the kubeconfig file for the AKS cluster (e.g.
+              /home/azureuser/.kube/config). Used to connect to the AKS cluster.
+          access_level:
+            type: string
+            description: Access level for the MCP server, One of [ readonly, readwrite,
+              admin ]
+          allow_namespaces:
+            type: string
+            description: Comma-separated list of namespaces to allow access to. If not
+              specified, all namespaces are allowed.
+          additional_tools:
+            type: string
+            description: Comma-separated list of additional tools, One of [ helm, cilium ]
+          container_user:
+            type: string
+            description: Username or UID of the container user (format
+              <name|uid>[:<group|gid>] e.g. 10000), ensuring correct permissions
+              to access the Azure and kubeconfig files. Leave empty to use
+              default user in the container.
+        required:
+          - azure_dir
+          - kubeconfig
+          - access_level
+    metadata:
+      pulls: 19107
+      stars: 2
+      githubStars: 143
+      category: devops
+      tags:
+        - devops
+        - azure
+        - kubernetes
+        - aks
+      license: MIT License
+      owner: Azure
+  github-official:
+    description: Official GitHub MCP Server, by GitHub. Provides seamless
+      integration with GitHub APIs, enabling advanced automation and interaction
+      capabilities for developers and tools.
+    title: GitHub Official
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: ghcr.io/github/github-mcp-server@sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132
+    ref: ""
+    source: https://github.com/github/github-mcp-server/tree/23fa0dd1a821d1346c1de2abafe7327d26981606
+    upstream: https://github.com/github/github-mcp-server
+    icon: https://avatars.githubusercontent.com/u/9919?s=200&v=4
+    secrets:
+      - name: github.personal_access_token
+        env: GITHUB_PERSONAL_ACCESS_TOKEN
+        example: <YOUR_TOKEN>
+        description: You can create a GitHub personal access token [on
+          GitHub](https://github.com/settings/personal-access-tokens/new)
+    allowHosts:
+      - api.github.com:443
+      - github.com:443
+      - raw.githubusercontent.com:443
+    metadata:
+      githubStars: 33879
+      category: devops
+      tags:
+        - github
+        - devops
+      license: MIT License
+      owner: github
+    oauth:
+      providers:
+        - provider: github
+          secret: github.personal_access_token
+          env: GITHUB_PERSONAL_ACCESS_TOKEN
+  apify:
+    description: Apify is the world's largest marketplace of tools for web scraping,
+      data extraction, and web automation. You can extract structured data from
+      social media, e-commerce, search engines, maps, travel sites, or any other
+      website.
+    title: Apify Remote
+    type: remote
+    dateAdded: 2025-09-08T19:03:35Z
+    ref: ""
+    source: ""
+    remote:
+      transport_type: streamable-http
+      url: https://mcp.apify.com
+      headers:
+        Authorization: Bearer ${APIFY_API_KEY}
+    icon: https://www.google.com/s2/favicons?domain=apify.com&sz=64
+    secrets:
+      - name: apify.api_key
+        env: APIFY_API_KEY
+        example: <YOUR_API_KEY>
+    metadata:
+      category: automation
+      tags:
+        - automation
+        - web-scraping
+        - data-extraction
+        - remote
+      license: Apache License 2.0
+      owner: docker
+  curl:
+    description: Standard curl tool.
+    title: Curl
+    type: poci
+    dateAdded: 2025-05-05T20:04:34Z
+    ref: ""
+    source: ""
+    icon: https://avatars.githubusercontent.com/u/16928085?s=200&v=4
+    metadata:
+      category: devops
+      tags:
+        - http
+      license: Apache License 2.0
+      owner: docker
+  SQLite:
+    description: Database interaction and business intelligence capabilities.
+    title: SQLite (Archived)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/sqlite@sha256:efbc05ccace18df122f26b674bd1730c76ece716551df2b3961d519909c34696
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/b4ee623039a6c60053ce67269701ad9e95073306/src/sqlite
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://avatars.githubusercontent.com/u/48680494?v=4
+    command:
+      - --db-path
+      - /mcp/db.sqlite
+    volumes:
+      - mcp-sqlite:/mcp
+    metadata:
+      pulls: 74803
+      stars: 16
+      githubStars: 91497
+      category: database
+      tags:
+        - sqlite
+        - database
+      license: Other
+      owner: modelcontextprotocol
+  fetch:
+    description: Fetches a URL from the internet and extracts its contents as markdown.
+    title: Fetch (Reference)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/fetch@sha256:1a7a0996a565a0b8ca5c41b42830d4e5f334d33f851596bbd9debb2beedb22d3
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/d31124c982401739917fd817c2a59db344529c16/src/fetch
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    metadata:
+      pulls: 1935437
+      stars: 58
+      githubStars: 91497
+      category: devops
+      tags:
+        - fetch
+        - devops
+      license: Other
+      owner: modelcontextprotocol
+  github:
+    description: Tools for interacting with the GitHub API, enabling file
+      operations, repository management, search functionality, and more.
+    title: GitHub (Archived)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/github@sha256:89fd71b6f2dd098de0d7517c1899b7fe90590d3193e253991d61a800b041bfd4
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/b4ee623039a6c60053ce67269701ad9e95073306
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    secrets:
+      - name: github.personal_access_token
+        env: GITHUB_PERSONAL_ACCESS_TOKEN
+        example: <YOUR_TOKEN>
+    metadata:
+      pulls: 152396
+      stars: 20
+      githubStars: 91497
+      category: devops
+      tags:
+        - github
+        - devops
+      license: Other
+      owner: modelcontextprotocol
+  slack:
+    description: Interact with Slack Workspaces over the Slack API.
+    title: Slack (Archived)
+    type: server
+    dateAdded: 2025-05-05T20:08:35Z
+    image: mcp/slack@sha256:4cc10c3f4bd988bd2dce40e3068fe38fa3b3bad1da99f9653eb5fa5cce35baa1
+    ref: ""
+    source: https://github.com/modelcontextprotocol/servers/tree/b4ee623039a6c60053ce67269701ad9e95073306
+    upstream: https://github.com/modelcontextprotocol/servers
+    icon: https://avatars.githubusercontent.com/u/6911160?s=200&v=4
+    secrets:
+      - name: slack.bot_token
+        env: SLACK_BOT_TOKEN
+        example: xoxb-your-bot-token
+    env:
+      - name: SLACK_TEAM_ID
+        value: "{{slack.team_id}}"
+      - name: SLACK_CHANNEL_IDS
+        value: "{{slack.channel_ids}}"
+    config:
+      - name: slack
+        description: Configure the connection to Slack
+        type: object
+        properties:
+          team_id:
+            type: string
+          channel_ids:
+            type: string
+        required:
+          - team_id
+    metadata:
+      pulls: 313365
+      stars: 25
+      githubStars: 91497
+      category: communication
+      tags:
+        - slack
+        - communication
+      license: Other
+      owner: modelcontextprotocol

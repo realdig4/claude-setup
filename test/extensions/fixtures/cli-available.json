@@ -1,0 +1,102 @@
+{
+  "installed": [],
+  "available": [
+    {
+      "pluginId": "frontend-design@anthropic-plugin-directory",
+      "name": "frontend-design",
+      "description": "Frontend design skill for UI/UX implementation",
+      "marketplaceName": "anthropic-plugin-directory",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official",
+        "path": "plugins/frontend-design",
+        "sha": "58267944f92187b7d6a1c822165c96c81c864806"
+      }
+    },
+    {
+      "pluginId": "superpowers@anthropic-plugin-directory",
+      "name": "superpowers",
+      "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+      "marketplaceName": "anthropic-plugin-directory",
+      "version": "6.4.2",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/obra/superpowers.git",
+        "sha": "8ca22dba9a94f28898bbce59f2537ff4d87c747d"
+      }
+    },
+    {
+      "pluginId": "document-skills@anthropic-plugin-directory",
+      "name": "document-skills",
+      "marketplaceName": "anthropic-plugin-directory",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/anthropics/skills.git",
+        "sha": "33375500bcea98d610eb30ce10ac4e59b89c390d"
+      }
+    },
+    {
+      "pluginId": "design@anthropic-plugin-directory",
+      "name": "design",
+      "description": "Accelerate design workflows — critique, design system management, UX writing, accessibility audits, research synthesis, and dev handoff. From exploration to pixel-perfect specs.",
+      "marketplaceName": "anthropic-plugin-directory",
+      "version": "1.2.0",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/knowledge-work-plugins",
+        "path": "design",
+        "sha": "33d3dea41a341b341d4f5da2e8801ae0c89be2b8"
+      }
+    },
+    {
+      "pluginId": "commit-commands@anthropic-plugin-directory",
+      "name": "commit-commands",
+      "description": "Streamline your git workflow with simple commands for committing, pushing, and creating pull requests",
+      "marketplaceName": "anthropic-plugin-directory",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official",
+        "path": "plugins/commit-commands",
+        "sha": "58267944f92187b7d6a1c822165c96c81c864806"
+      }
+    },
+    {
+      "pluginId": "frontend-design@claude-plugins-official",
+      "name": "frontend-design",
+      "description": "Create distinctive, production-grade frontend interfaces with high design quality. Generates creative, polished code that avoids generic AI aesthetics.",
+      "marketplaceName": "claude-plugins-official",
+      "source": "./plugins/frontend-design",
+      "installCount": 1266133
+    },
+    {
+      "pluginId": "agent-sdk-dev@claude-plugins-official",
+      "name": "agent-sdk-dev",
+      "description": "Development kit for working with the Claude Agent SDK",
+      "marketplaceName": "claude-plugins-official",
+      "source": "./plugins/agent-sdk-dev",
+      "installCount": 67988
+    },
+    {
+      "pluginId": "42crunch-api-security-testing@claude-plugins-official",
+      "name": "42crunch-api-security-testing",
+      "description": "Automate API security directly in Claude Code with 42Crunch - automatically audit OpenAPI specs, detect vulnerabilities aligned with OWASP API Security risks (including BOLA/BFLA), and apply AI-powered fixes. Designed for AI-assisted development workflows, it provides continuous guardrails through an audit->scan->remediate->validate loop, ensuring APIs meet enterprise security standards before deployment.",
+      "marketplaceName": "claude-plugins-official",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/42Crunch-AI/claude-plugins.git",
+        "path": "plugins/api-security-testing",
+        "ref": "v1.5.5",
+        "sha": "faf5305385de8afed9468904e8639be737aff39e"
+      },
+      "installCount": 3474
+    },
+    {
+      "pluginId": "commit-commands@claude-plugins-official",
+      "name": "commit-commands",
+      "description": "Commands for git commit workflows including commit, push, and PR creation",
+      "marketplaceName": "claude-plugins-official",
+      "source": "./plugins/commit-commands",
+      "installCount": 178476
+    }
+  ]
+}

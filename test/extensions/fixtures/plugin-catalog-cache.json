@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "fetchedAt": "2026-10-24T00:37:36.660Z",
+  "catalog": {
+    "generated_at": "2026-10-21T07:42:41.091Z",
+    "plugins": {
+      "frontend-design@claude-plugins-official": {
+        "plugin": "frontend-design",
+        "unique_installs": 1266133,
+        "last_updated": "2026-09-01T14:23:53-04:00"
+      },
+      "commit-commands@claude-plugins-official": {
+        "plugin": "commit-commands",
+        "unique_installs": 178476,
+        "last_updated": "2026-02-20T01:06:49Z"
+      },
+      "superpowers@claude-plugins-official": {
+        "plugin": "superpowers",
+        "unique_installs": 1123984,
+        "last_updated": "2026-10-09T17:28:04-07:00"
+      }
+    }
+  }
+}

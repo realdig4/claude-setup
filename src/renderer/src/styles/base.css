@@ -1,0 +1,173 @@
+/*
+ * Base layer: dark theme overrides, element defaults, scrollbars, selection and reduced motion.
+ * The active theme is the data-theme attribute on <html> ('light' | 'dark'), kept in sync by lib/theme.ts.
+ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --elev-1: oklch(0.35 0.03 55 / 0.05);
+    --elev-2: oklch(0.35 0.03 55 / 0.08);
+    --elev-3: oklch(0.3 0.03 55 / 0.12);
+    --elev-4: oklch(0.25 0.03 55 / 0.2);
+    --titlebar-height: 44px;
+    --sidebar-width: 240px;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.198 0.006 60);
+    --color-sidebar: oklch(0.163 0.006 58);
+    --color-surface: oklch(0.228 0.007 60);
+    --color-surface-2: oklch(0.262 0.008 60);
+    --color-surface-3: oklch(0.305 0.009 60);
+    --color-elevated: oklch(0.25 0.008 60);
+    --color-line: oklch(0.295 0.008 60);
+    --color-line-strong: oklch(0.37 0.01 60);
+    --color-fg: oklch(0.955 0.006 80);
+    --color-fg-muted: oklch(0.74 0.01 70);
+    --color-fg-subtle: oklch(0.64 0.01 65);
+    --color-inverse: oklch(0.93 0.006 80);
+    --color-fg-inverse: oklch(0.2 0.008 60);
+    --color-overlay: oklch(0.08 0.005 60 / 0.6);
+
+    --color-accent-solid: oklch(0.57 0.135 37);
+    --color-accent-solid-hover: oklch(0.61 0.138 38);
+    --color-accent-text: oklch(0.76 0.115 42);
+    --color-accent-soft: oklch(0.3 0.05 40);
+    --color-accent-line: oklch(0.45 0.08 40);
+    --color-ring: oklch(0.74 0.12 41);
+
+    --color-success: oklch(0.72 0.16 150);
+    --color-success-text: oklch(0.8 0.13 152);
+    --color-success-soft: oklch(0.29 0.045 152);
+    --color-success-line: oklch(0.42 0.075 152);
+
+    --color-warn: oklch(0.8 0.15 75);
+    --color-warn-text: oklch(0.84 0.12 82);
+    --color-warn-soft: oklch(0.3 0.045 75);
+    --color-warn-line: oklch(0.44 0.075 72);
+
+    --color-danger: oklch(0.68 0.19 25);
+    --color-danger-solid: oklch(0.545 0.175 27);
+    --color-danger-solid-hover: oklch(0.6 0.175 27);
+    --color-danger-text: oklch(0.77 0.13 25);
+    --color-danger-soft: oklch(0.29 0.06 25);
+    --color-danger-line: oklch(0.44 0.1 25);
+
+    --color-info: oklch(0.7 0.13 250);
+    --color-info-text: oklch(0.79 0.1 250);
+    --color-info-soft: oklch(0.285 0.045 255);
+    --color-info-line: oklch(0.43 0.075 255);
+
+    --elev-1: oklch(0 0 0 / 0.28);
+    --elev-2: oklch(0 0 0 / 0.38);
+    --elev-3: oklch(0 0 0 / 0.5);
+    --elev-4: oklch(0 0 0 / 0.66);
+  }
+
+  html {
+    height: 100%;
+    background: var(--color-sidebar);
+  }
+
+  /* Before JS applies data-theme, follow the OS so a dark-mode user never sees a white flash. */
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+      color-scheme: dark;
+      background: oklch(0.163 0.006 58);
+    }
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-optical-sizing: auto;
+    font-feature-settings: 'cv05';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  #root {
+    height: 100%;
+    isolation: isolate;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    letter-spacing: -0.012em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+    font-feature-settings: 'calt' 0;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-accent) 28%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--color-fg) 20%, transparent) transparent;
+  }
+
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input[type='search']::-webkit-search-cancel-button,
+  input[type='search']::-webkit-search-decoration {
+    appearance: none;
+  }
+
+  img,
+  svg {
+    user-select: none;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+/* Reduced motion: keep spinners (they communicate progress) but stop decorative motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-ping-soft {
+    animation: none !important;
+  }
+
+  .animate-indeterminate {
+    animation-duration: 3s !important;
+  }
+
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+}

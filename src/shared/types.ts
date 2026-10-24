@@ -53,6 +53,10 @@ export interface EnvVarSpec {
   format?: 'string' | 'path' | 'directory' | 'url' | 'number' | 'boolean'
   /** Where the user can obtain the value (e.g. token settings page). */
   helpUrl?: string
+  /** Value template, e.g. "Bearer {{value}}" — the user types only the token. */
+  template?: string
+  /** Allowed values (shown as a select). */
+  choices?: string[]
 }
 
 export interface ArgSpec {
@@ -63,6 +67,8 @@ export interface ArgSpec {
   repeatable?: boolean
   format?: 'string' | 'path' | 'directory' | 'url' | 'number'
   default?: string
+  secret?: boolean
+  choices?: string[]
 }
 
 export type InstallKind = 'npm' | 'pypi' | 'docker' | 'remote' | 'binary' | 'mcpb' | 'nuget' | 'manual'
@@ -90,6 +96,10 @@ export interface InstallOption {
   headers?: EnvVarSpec[]
   argsSpec?: ArgSpec[]
   notes?: string
+  /** Checksum of an .mcpb bundle (computed and pinned on first download). */
+  sha256?: string
+  /** Runtime version requirement, e.g. ">=24". */
+  runtimeVersion?: string
 }
 
 export interface CatalogServer {
@@ -118,6 +128,8 @@ export interface CatalogServer {
   stars?: number
   updatedAt?: string
   version?: string
+  /** Deprecated by its publisher (true or a reason). */
+  deprecated?: string | boolean
   install: InstallOption[]
 }
 
@@ -256,6 +268,8 @@ export interface TargetChangeResult {
   needsRestart?: boolean
   /** The exact entry written (as stored in that target's format). */
   written?: unknown
+  /** Machine-readable failure reason so the UI can offer e.g. "Replace". */
+  code?: 'exists' | 'not-found' | 'invalid-file' | 'blocked' | 'backup-failed' | 'write-failed' | 'unsupported' | 'conflict'
 }
 
 export interface InstallResult {
@@ -374,7 +388,7 @@ export interface ProviderPreset {
   /** Recommended context window in tokens for CLAUDE_CODE_AUTO_COMPACT_WINDOW. */
   contextWindow?: number
   listModels?: {
-    /** Absolute URL or path appended to the region baseUrl when it starts with '/'. */
+    /** Absolute URL, a path appended to the region baseUrl when it starts with '/', or '{origin}/…' (origin of the region baseUrl). */
     url: string
     auth: 'bearer' | 'x-api-key' | 'none'
     shape: 'openai' | 'anthropic' | 'ollama'
@@ -494,6 +508,10 @@ export interface ProxyUpstream {
   useMaxCompletionTokens?: boolean
   streamOptions?: boolean
   extraHeaders?: Record<string, string>
+  /** reasoning_effort sent for Anthropic 'xhigh'/'max' effort (default 'high'). */
+  maxEffort?: 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max'
+  /** Extra top-level fields merged into every upstream payload (model/messages/stream protected). */
+  extraBody?: Record<string, unknown>
 }
 
 export interface ProxyConfig {
@@ -553,7 +571,7 @@ export type ExtensionSource =
   | 'local'
 
 export interface ExtensionItem {
-  /** Unique: "<kind>:<source>:<name>" or plugin id "name@marketplace". */
+  /** "plugin:<name>@<marketplace>", "<kind>:<source>:<owner>/<repo>/<path>" (catalog), or "<kind>:local:<user|project|local>[:<encodeURIComponent(projectPath)>]:<key>" (installed, from installed()). */
   id: string
   kind: ExtensionKind
   name: string
@@ -677,6 +695,7 @@ export interface AppSettings {
   /** Secret store keys for optional Glama / PulseMCP API keys (enable those sources). */
   glamaKeyRef?: string
   pulsemcpKeyRef?: string
+  pulsemcpTenantId?: string
   /** Secret store key for an optional GitHub token (raises API rate limits). */
   githubTokenRef?: string
   /** Restart Claude Desktop automatically after changes (asks otherwise). */
@@ -686,6 +705,8 @@ export interface AppSettings {
   onboarded: boolean
   /** Recent project folders used for project/local scopes. */
   recentProjects: string[]
+  /** Start Claude Setup hidden in the tray when the user logs in (keeps the proxy available). */
+  startAtLogin?: boolean
 }
 
 export interface InstallRecord {
@@ -700,8 +721,27 @@ export interface InstallRecord {
 export interface DisabledServerRecord {
   name: string
   target: TargetRef
+  /** Redacted copy (secret values blanked) when secretRef is set. */
   config: ServerConfig
   disabledAt: string
+  /** Secret-store key holding the full config (state.json keeps a redacted copy). */
+  secretRef?: string
+}
+
+/** What Claude Setup wrote into one settings file (value tags only, never secrets). */
+export interface ModelWrittenFile {
+  path: string
+  env: Record<string, string>
+  settings: Record<string, string>
+}
+
+/** Tracks model settings written by Claude Setup so reset() removes only what we own. */
+export interface ModelApplyMarker {
+  profileId?: string
+  claudeCode?: ModelWrittenFile
+  vscode?: ModelWrittenFile[]
+  onboardingSet?: boolean
+  updatedAt: string
 }
 
 export interface AppState {
@@ -712,6 +752,8 @@ export interface AppState {
   installs: InstallRecord[]
   disabled: DisabledServerRecord[]
   proxy: ProxyConfig
+  /** What Claude Setup wrote into Claude Code / VS Code settings. */
+  modelApply?: ModelApplyMarker
 }
 
 export interface AppInfo {
@@ -724,6 +766,8 @@ export interface AppInfo {
   surface: 'gui' | 'cli' | 'mcp'
   /** How Claude Setup's own MCP server is launched from this install. */
   selfMcpConfig?: StdioServerConfig
+  /** Why selfMcpConfig is unavailable (portable build, translocated app, …). */
+  selfMcpUnavailableReason?: string
   packaged: boolean
 }
 

@@ -1,0 +1,245 @@
+{
+  "servers": [
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+        "_meta": {
+          "io.modelcontextprotocol.registry/publisher-provided": {
+            "github": {
+              "defaultBranch": "main",
+              "displayName": "Markitdown",
+              "isInOrganization": true,
+              "legacyId": "976a2f68e16c4e2b97097133487f8c14",
+              "license": "MIT License",
+              "name": "markitdown",
+              "nameWithOwner": "microsoft/markitdown",
+              "opengraphImageUrl": "https://opengraph.githubassets.com/660be2986e8108a4b5b49fa580ef48fedaea65ce51a778d898dd5b8a21e53473/microsoft/markitdown",
+              "ownerAvatarUrl": "https://avatars.githubusercontent.com/u/6154722?v=4",
+              "preferredImage": "https://avatars.githubusercontent.com/u/6154722?v=4",
+              "primaryLanguage": "Python",
+              "primaryLanguageColor": "#3572A5",
+              "publicId": "976a2f68-e16c-4e2b-9709-7133487f8c14",
+              "pushedAt": "2026-10-23T17:04:06Z",
+              "readme": "# MarkItDown\n\n[![PyPI](https://img.shields.io/pypi/v/markitdown.svg)](https://pypi.org/project/markitdown/)\n![PyPI - Downloads](https://img.shields.io/pypi/dd/markitdown)\n\n> [!IMPORTANT]\n> MarkItDown performs I/O with the privileges of the current process. Like open() or requests.get(), it will access resources that the process itself can access. Sanitize your inputs in untrusted environments, and call the narrowest `convert_*` function needed for your use case (e.g., `convert_stream()`, or `convert_local()`). See the [Security Considerations](#security-considerations) section of the documentation for more information.\n\nMarkItDown is a lightweight Python utility for converting various files to Markdown for use with LLMs and related text analysis pipelines. To this end, it is most comparable to [textract](https://github.com/deanmalmgren/textract), but with a focus on preserving important document structure and content as Markdown (including: headings, lists, tables, links, etc.) While the output is often reasonably presentable and human-friendly, it is meant to be consumed by text analysis tools -- and may not be the best option for high-fidelity document conversions for human consumption.\n\nMarkItDown currently supports the conversion from:\n\n- PDF\n- PowerPoint\n- Word\n- Excel\n- Images (EXIF metadata and OCR)\n- Audio (EXIF metadata and speech transcription)\n- HTML\n- Text-based formats (CSV, JSON, XML)\n- ZIP files (iterates over contents)\n- YouTube URLs\n- EPubs\n- ... and more!\n\n#",
+              "readmeUpdatedAt": "2025-09-09T10:55:23Z",
+              "readmeVersion": "1.0.0",
+              "stargazerCount": 191821,
+              "topics": [
+                "langchain",
+                "openai",
+                "autogen-extension",
+                "autogen",
+                "markdown",
+                "microsoft-office",
+                "pdf"
+              ],
+              "usesCustomOpenGraphImage": false
+            }
+          }
+        },
+        "description": "Convert various file formats (PDF, Word, Excel, images, audio) to Markdown.",
+        "name": "microsoft/markitdown",
+        "packages": [
+          {
+            "identifier": "markitdown-mcp",
+            "registryType": "pypi",
+            "runtimeHint": "uvx",
+            "transport": {
+              "type": "stdio"
+            },
+            "version": "0.0.1a4"
+          }
+        ],
+        "repository": {
+          "id": "888092115",
+          "source": "github",
+          "url": "https://github.com/microsoft/markitdown"
+        },
+        "version": "1.0.0"
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "isLatest": true,
+          "publishedAt": "2025-09-09T17:55:23Z",
+          "status": "active",
+          "updatedAt": "2026-01-21T09:35:10Z"
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+        "_meta": {
+          "io.modelcontextprotocol.registry/publisher-provided": {
+            "github": {
+              "defaultBranch": "master",
+              "displayName": "Context7",
+              "homepageUrl": "https://context7.com",
+              "isInOrganization": true,
+              "legacyId": "814e7c529b1047f8ae5c9e794943a57c",
+              "license": "MIT License",
+              "name": "context7",
+              "nameWithOwner": "upstash/context7",
+              "opengraphImageUrl": "https://opengraph.githubassets.com/dbd95e016321361ff13923f8901e0bdb6f9ea144932d0f515bca0c7235612d0c/upstash/context7",
+              "ownerAvatarUrl": "https://avatars.githubusercontent.com/u/74989412?v=4",
+              "preferredImage": "https://raw.githubusercontent.com/upstash/context7/master/public/icon.png",
+              "primaryLanguage": "TypeScript",
+              "primaryLanguageColor": "#3178c6",
+              "publicId": "814e7c52-9b10-47f8-ae5c-9e794943a57c",
+              "pushedAt": "2026-10-23T13:48:26Z",
+              "readme": "![Cover](https://raw.githubusercontent.com/upstash/context7/master/public/cover.png)\n\n[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=context7&config=eyJ1cmwiOiJodHRwczovL21jcC5jb250ZXh0Ny5jb20vbWNwIn0%3D)\n\n# Context7 - Up-to-date Docs for AI Agents\n\n[![Website](https://img.shields.io/badge/Website-context7.com-blue)](https://context7.com) [![NPM Version](https://img.shields.io/npm/v/%40upstash%2Fcontext7-mcp?color=red)](https://www.npmjs.com/package/@upstash/context7-mcp) [![MIT licensed](https://img.shields.io/npm/l/%40upstash%2Fcontext7-mcp)](./LICENSE)\n\n[![繁體中文](https://img.shields.io/badge/docs-繁體中文-yellow)](./i18n/README.zh-TW.md) [![简体中文](https://img.shields.io/badge/docs-简体中文-yellow)](./i18n/README.zh-CN.md) [![日本語](https://img.shields.io/badge/docs-日本語-b7003a)](./i18n/README.ja.md) [![한국어 문서](https://img.shields.io/badge/docs-한국어-green)](./i18n/README.ko.md) [![Documentación en Español](https://img.shields.io/badge/docs-Español-orange)](./i18n/README.es.md) [![Documentation en Français](https://img.shields.io/badge/docs-Français-blue)](./i18n/README.fr.md) [![Documentação em Português (Brasil)](https://img.shields.io/badge/docs-Português%20(Brasil)-purple)](./i18n/README.pt-BR.md) [![Documentazione in italiano](https://img.shields.io/badge/docs-Italian-red)](./i18n/README.it.md) [![Dokumentasi Bahasa Indonesia](https://img.shields.io/badge/docs-Bahasa%20Indonesia-pink)](./i18n/README.id-ID.md) [![Dokume",
+              "readmeUpdatedAt": "2026-10-19T13:48:33Z",
+              "readmeVersion": "4.4.4",
+              "stargazerCount": 63550,
+              "topics": [
+                "llm",
+                "mcp",
+                "mcp-server",
+                "vibe-coding"
+              ],
+              "usesCustomOpenGraphImage": false
+            }
+          }
+        },
+        "description": "Up-to-date docs for AI agents",
+        "icons": [
+          {
+            "mimeType": "image/png",
+            "src": "https://raw.githubusercontent.com/upstash/context7/master/public/icon.png"
+          }
+        ],
+        "name": "io.github.upstash/context7",
+        "packages": [
+          {
+            "environmentVariables": [
+              {
+                "description": "API key for authentication",
+                "isSecret": true,
+                "name": "CONTEXT7_API_KEY"
+              }
+            ],
+            "identifier": "@upstash/context7-mcp",
+            "registryType": "npm",
+            "transport": {
+              "type": "stdio"
+            },
+            "version": "4.4.4"
+          },
+          {
+            "environmentVariables": [
+              {
+                "description": "API key for authentication",
+                "isSecret": true,
+                "name": "CONTEXT7_API_KEY"
+              }
+            ],
+            "fileSha256": "25cabf3767cc61171e3435c4ce5427e03ffe7ab671cc0e2d5b89e04eef246949",
+            "identifier": "https://github.com/upstash/context7/releases/download/mcpb-v4.4.4/context7.mcpb",
+            "registryType": "mcpb",
+            "transport": {
+              "type": "stdio"
+            },
+            "version": "4.4.4"
+          }
+        ],
+        "remotes": [
+          {
+            "headers": [
+              {
+                "description": "API key for authentication. Accepts \"Bearer <key>\" or the raw key.",
+                "isSecret": true,
+                "name": "Authorization"
+              }
+            ],
+            "type": "streamable-http",
+            "url": "https://mcp.context7.com/mcp"
+          }
+        ],
+        "repository": {
+          "source": "github",
+          "url": "https://github.com/upstash/context7"
+        },
+        "title": "Context7",
+        "version": "4.4.4",
+        "websiteUrl": "https://context7.com"
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "isLatest": true,
+          "publishedAt": "2026-10-19T13:48:33Z",
+          "status": "active",
+          "updatedAt": "2026-10-23T23:21:30Z"
+        }
+      }
+    },
+    {
+      "server": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+        "_meta": {
+          "io.modelcontextprotocol.registry/publisher-provided": {
+            "github": {
+              "defaultBranch": "main",
+              "displayName": "Playwright",
+              "homepageUrl": "https://www.npmjs.com/package/@playwright/mcp",
+              "isInOrganization": true,
+              "legacyId": "41b798497e6c4fc782c05a611ea21523",
+              "license": "Apache License 2.0",
+              "name": "playwright-mcp",
+              "nameWithOwner": "microsoft/playwright-mcp",
+              "opengraphImageUrl": "https://opengraph.githubassets.com/d28fef0eac95ddafe20b8cd6fdf7f6d90e75653b935d4957de51ce0f9c8c337e/microsoft/playwright-mcp",
+              "ownerAvatarUrl": "https://avatars.githubusercontent.com/u/6154722?v=4",
+              "preferredImage": "https://avatars.githubusercontent.com/u/6154722?v=4",
+              "primaryLanguage": "TypeScript",
+              "primaryLanguageColor": "#3178c6",
+              "publicId": "41b79849-7e6c-4fc7-82c0-5a611ea21523",
+              "pushedAt": "2026-10-22T17:43:26Z",
+              "readme": "## Playwright MCP\n\nA Model Context Protocol (MCP) server that provides browser automation capabilities using [Playwright](https://playwright.dev). This server enables LLMs to interact with web pages through structured accessibility snapshots, bypassing the need for screenshots or visually-tuned models.\n\n### Playwright MCP vs Playwright CLI\n\nThis package provides MCP interface into Playwright. If you are using a **coding agent**, you might benefit from using the [CLI+SKILLS](https://github.com/microsoft/playwright-cli) instead.\n\n- **CLI**: Modern **coding agents** increasingly favor CLI–based workflows exposed as SKILLs over MCP because CLI invocations are more token-efficient: they avoid loading large tool schemas and verbose accessibility trees into the model context, allowing agents to act through concise, purpose-built commands. This makes CLI + SKILLs better suited for high-throughput coding agents that must balance browser automation with large codebases, tests, and reasoning within limited context windows.<br>**Learn more about [Playwright CLI with SKILLS](https://github.com/microsoft/playwright-cli)**.\n\n- **MCP**: MCP remains relevant for specialized agentic loops that benefit from persistent state, rich introspection, and iterative reasoning over page structure, such as exploratory automation, self-healing tests, or long-running autonomous workflows where maintaining continuous browser context outweighs token cost concerns.\n\n### Key Features\n\n- **Fast and lightweight*",
+              "readmeUpdatedAt": "2025-09-09T10:55:23Z",
+              "readmeVersion": "0.0.1-seed",
+              "stargazerCount": 38555,
+              "topics": [
+                "mcp",
+                "playwright"
+              ],
+              "usesCustomOpenGraphImage": false
+            }
+          }
+        },
+        "description": "Automate web browsers using accessibility trees for testing and data extraction.",
+        "name": "microsoft/playwright-mcp",
+        "packages": [
+          {
+            "identifier": "@playwright/mcp",
+            "registryType": "npm",
+            "runtimeHint": "npx",
+            "transport": {
+              "type": "stdio"
+            },
+            "version": "latest"
+          }
+        ],
+        "repository": {
+          "id": "952688112",
+          "source": "github",
+          "url": "https://github.com/microsoft/playwright-mcp"
+        },
+        "version": "0.0.1-seed"
+      },
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "isLatest": true,
+          "publishedAt": "2025-09-09T17:55:23Z",
+          "status": "active",
+          "updatedAt": "2026-01-18T15:47:35Z"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "count": 3,
+    "nextCursor": "mcp.cursor.eyJ2IjoxfQ",
+    "per_page": 3,
+    "total": 4,
+    "total_pages": 2
+  }
+}

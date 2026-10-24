@@ -103,6 +103,38 @@ Build: `electron-vite` builds `out/main/{index,mcp,cli}.js`, `out/preload/index.
 - `research_skills.md` — skills/agents/commands/plugins/marketplaces/hooks/statusline/output styles/CLAUDE.md
 - `research_stack.md` — MCP SDK v2 server/client code, Electron 45 patterns, PATH fixing, packaging, runtimes
 
+## Critic corrections (override the research files where they conflict) — see `research_critic.md`
+
+- **Desktop 3P mode** is active only if `deploymentMode: "3p"` is set in the 3P profile's own
+  `claude_desktop_config.json` (Windows `%LOCALAPPDATA%\Claude-3p\`, else `<userData>-3p/`) or a managed policy forces
+  it. Folder existence means nothing (they exist empty on this machine). Write MCP servers to the 3P file only when 3P is
+  active; always preserve `deploymentMode`.
+- **Desktop logs on Windows**: `%LOCALAPPDATA%\Claude\logs` for current builds (check `%APPDATA%\Claude\logs` and the
+  MSIX LocalCache logs too). Source of truth for the config path = newest `Reading claude_desktop_config.json from` line.
+- **`cmd /c npx` is not needed** by Desktop 3.x or Claude Code ≥ 2.1.119. Write bare `npx`. Because `.cmd` shims run
+  through cmd.exe, put values containing spaces or `& | < > ^ %` in `env`, not `args`.
+- **`.mcpb` install on Windows**: run `%LOCALAPPDATA%\Microsoft\WindowsApps\claude-desktop.exe "<file>"` (one file per
+  launch); no file association exists. macOS `open -a Claude <file>`, Linux `xdg-open`.
+- **Claude Desktop exists for Linux** (official beta, apt repo) — not "macOS/Windows only".
+- **Kimi Code** base URL: intl `https://api.kimi.ai/coding/`, China `https://api.kimi.com/coding/`, `ANTHROPIC_API_KEY`.
+  Never route coding-plan keys through the proxy.
+- **Do not rename models with a `claude-` prefix** in the proxy; use `modelPicker` (user settings) or
+  `ANTHROPIC_DEFAULT_*_MODEL_NAME` labels.
+- **`[1m]`** only for models with ≥ 1M context. For 256K models omit `[1m]` and set `CLAUDE_CODE_MAX_CONTEXT_TOKENS`.
+- `allowedMarketplaces` is a policy gate, NOT an alias of `extraKnownMarketplaces` (alias is `additionalMarketplaces`).
+- `claudeCode.selectedModel` does not exist — never write it.
+- Retired model IDs must not appear in presets: `kimi-k2.5`, `deepseek-chat`, `deepseek-reasoner`, `kimi-k2p5`.
+  Kimi K2 series retires by end of Dec 2026 (new accounts lose access 2026-10-31) → Haiku default `kimi-k3` for safety.
+- **Bedrock**: pin Sonnet and Haiku explicitly (`us.anthropic.claude-sonnet-5-5`, `us.anthropic.claude-haiku-5-5`),
+  otherwise they resolve to Sonnet 4.5.
+- **Windsurf** config moved: `~/.config/devin/mcp_config.json` (Windows `%APPDATA%\devin\mcp_config.json`); older builds
+  used `~/.codeium/windsurf/mcp_config.json` — detect both, prefer the one that exists.
+- **VS Code native MCP** alternative writer: `code --add-mcp '{"name":…,"type":"stdio",…}'` (user profile).
+- **Proxy lifetime**: the proxy dies when the app quits. Offer "Start Claude Setup at login (hidden in tray)" via
+  `app.setLoginItemSettings({openAtLogin, args:['--hidden']})` on Windows/macOS and a `~/.config/autostart/*.desktop` file
+  on Linux.
+- `mcp-remote` lives at punkpeye/mcp-remote (npm `mcp-remote@0.15.2`).
+
 ## Key product decisions
 
 - **Third-party models only for Claude Code (CLI + VS Code extension)**. Claude Desktop deliberately rejects
